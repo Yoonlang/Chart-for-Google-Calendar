@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
 
-  "name": "Chrome Extension TypeScript Starter",
-  "description": "Chrome Extension, TypeScript, Visual Studio Code",
+  "name": "Chart for Google Calendar",
+  "description": "Support statistics for Google Calendar by chart",
   "version": "1.0",
 
   "options_ui": {
