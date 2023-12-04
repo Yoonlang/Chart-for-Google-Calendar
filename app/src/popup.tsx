@@ -39,7 +39,10 @@ const Popup = () => {
         <li>Current Time: {new Date().toLocaleTimeString()}</li>
       </ul>
       <button
-        onClick={() => setCount(count + 1)}
+        onClick={() => {
+          console.log("hi");
+          setCount(count + 1);
+        }}
         style={{ marginRight: "5px" }}
       >
         count up
