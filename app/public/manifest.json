@@ -14,5 +14,15 @@
     "default_popup": "popup.html"
   },
 
-  "host_permissions": ["<all_urls>"]
+  "permissions": ["identity"],
+  "host_permissions": ["<all_urls>"],
+
+  "oauth2": {
+    "client_id": "879174495444-jrpfddad22rap7t5n0fksrhqvpakqnbc.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/calendar.calendarlist.readonly",
+      "https://www.googleapis.com/auth/calendar.calendars.readonly",
+      "https://www.googleapis.com/auth/calendar.events.readonly"
+    ]
+  }
 }
