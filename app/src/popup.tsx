@@ -15,8 +15,13 @@ import {
   getTodayMidnight,
 } from "./util";
 import { URLS } from "./const";
+import styled from "styled-components";
 
 ChartJS.register(ArcElement, Tooltip, Legend, LinearScale);
+
+const SCPopup = styled.div`
+  display: flex;
+`;
 
 const Popup = () => {
   const [calendarData, setCalendarData] = useState<any>();
@@ -130,7 +135,7 @@ const Popup = () => {
   }, [calendarData]);
 
   return (
-    <>
+    <SCPopup>
       <div>
         Last Week
         {prevChartData && <Doughnut data={prevChartData} />}
@@ -139,7 +144,7 @@ const Popup = () => {
         This Week
         {nextChartData && <Doughnut data={nextChartData} />}
       </div>
-    </>
+    </SCPopup>
   );
 };
 
