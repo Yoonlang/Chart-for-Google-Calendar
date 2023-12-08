@@ -8,19 +8,20 @@ import {
   LinearScale,
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import { getMinuites, getThisMondayMidnight, getTodayMidnight } from "./util";
+import {
+  getDateRangeEvents,
+  getMinuites,
+  getThisMondayMidnight,
+  getTodayMidnight,
+} from "./util";
+import { URLS } from "./const";
 
 ChartJS.register(ArcElement, Tooltip, Legend, LinearScale);
 
-const URLS = {
-  CALENDAR_LIST: "https://www.googleapis.com/calendar/v3/users/me/calendarList",
-  EVENTS_PRE: "https://www.googleapis.com/calendar/v3/calendars/",
-  EVENTS_SUF: "/events",
-};
-
 const Popup = () => {
   const [calendarData, setCalendarData] = useState<any>();
-  const [chartData, setChartData] = useState<any>();
+  const [prevChartData, setPrevChartData] = useState<any>();
+  const [nextChartData, setNextChartData] = useState<any>();
 
   useEffect(() => {
     chrome.identity.getAuthToken({ interactive: true }, async (token) => {
@@ -35,20 +36,22 @@ const Popup = () => {
       const calendarListData = await calendarListResponse.json();
       const calendarList = calendarListData.items;
 
-      const thisWeekResponse = await Promise.all(
-        calendarList.map((c) =>
-          fetch(
-            `${URLS.EVENTS_PRE}${c.id}${
-              URLS.EVENTS_SUF
-            }/?timeMin=${getThisMondayMidnight().toISOString()}&timeMax=${getTodayMidnight().toISOString()}&maxResults=1000`,
-            {
-              headers,
-            }
-          )
-        )
+      const thisMondayMidnight = getThisMondayMidnight();
+      const mondayOfLastWeek = new Date(thisMondayMidnight);
+      mondayOfLastWeek.setDate(thisMondayMidnight.getDate() - 7);
+
+      const thisWeekData = await getDateRangeEvents(
+        calendarList,
+        headers,
+        thisMondayMidnight.toISOString(),
+        getTodayMidnight().toISOString()
       );
-      const thisWeekData = await Promise.all(
-        thisWeekResponse.map(async (res) => await res.json())
+
+      const lastWeekData = await getDateRangeEvents(
+        calendarList,
+        headers,
+        mondayOfLastWeek.toISOString(),
+        thisMondayMidnight.toISOString()
       );
 
       setCalendarData(
@@ -57,11 +60,14 @@ const Popup = () => {
             id,
             backgroundColor,
             summary,
-            events: thisWeekData[idx].items.map(
-              ({ start, end, colorId, id }) => {
+            events: [
+              lastWeekData[idx].items.map(({ start, end, colorId, id }) => {
                 return { start, end, colorId, id };
-              }
-            ),
+              }),
+              thisWeekData[idx].items.map(({ start, end, colorId, id }) => {
+                return { start, end, colorId, id };
+              }),
+            ],
           };
         })
       );
@@ -73,15 +79,41 @@ const Popup = () => {
       return;
     }
 
-    setChartData({
+    console.log(calendarData);
+
+    setPrevChartData({
+      labels: calendarData.map((d) => d.summary),
+      datasets: [
+        {
+          label: "Time spent(m)",
+          data: calendarData.map(({ events }) => {
+            console.log("events", events, events[0]);
+            return getMinuites(
+              events[0]
+                .filter((e) => e.start?.dateTime)
+                .map((e) => {
+                  return (
+                    new Date(e.end.dateTime).getTime() -
+                    new Date(e.start.dateTime).getTime()
+                  );
+                })
+                .reduce((acc, cur) => acc + cur, 0)
+            );
+          }),
+          backgroundColor: calendarData.map((d) => d.backgroundColor),
+        },
+      ],
+    });
+
+    setNextChartData({
       labels: calendarData.map((d) => d.summary),
       datasets: [
         {
           label: "Time spent(m)",
           data: calendarData.map(({ events }) => {
             return getMinuites(
-              events
-                .filter((e) => e.start.dateTime)
+              events[1]
+                .filter((e) => e.start?.dateTime)
                 .map((e) => {
                   return (
                     new Date(e.end.dateTime).getTime() -
@@ -99,7 +131,14 @@ const Popup = () => {
 
   return (
     <>
-      <div>{chartData && <Doughnut data={chartData} />}</div>
+      <div>
+        Last Week
+        {prevChartData && <Doughnut data={prevChartData} />}
+      </div>
+      <div>
+        This Week
+        {nextChartData && <Doughnut data={nextChartData} />}
+      </div>
     </>
   );
 };

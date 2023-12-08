@@ -1,3 +1,5 @@
+import { URLS } from "./const";
+
 export const getThisMondayMidnight = () => {
   const today = new Date();
   const dayOfWeek = today.getDay();
@@ -30,4 +32,18 @@ export const getMinuites = (ms) => {
   const seconds = Math.floor(ms / 1000);
   const minutes = Math.floor(seconds / 60);
   return minutes;
+};
+
+export const getDateRangeEvents = async (calendarList, headers, prev, next) => {
+  const res = await Promise.all(
+    calendarList.map((c) =>
+      fetch(
+        `${URLS.EVENTS_PRE}${c.id}${URLS.EVENTS_SUF}/?timeMin=${prev}&timeMax=${next}&maxResults=1000`,
+        {
+          headers,
+        }
+      )
+    )
+  );
+  return await Promise.all(res.map(async (res) => await res.json()));
 };
