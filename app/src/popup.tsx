@@ -10,7 +10,7 @@ import {
 import { Doughnut } from "react-chartjs-2";
 import styled from "styled-components";
 import { useCalendarData } from "./useCalendarData";
-import AverageDailyTime from "./components/AverageDailyTime";
+import AverageDailyTime from "./AverageDailyTime";
 
 ChartJS.register(ArcElement, Tooltip, Legend, LinearScale);
 
