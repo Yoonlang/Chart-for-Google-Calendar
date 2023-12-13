@@ -169,7 +169,7 @@ const Popup = () => {
         )}
       </SCStatistics>
       <SCStatistics>
-        This Week - test
+        This Week
         {nextChartData && (
           <>
             <Doughnut data={nextChartData} />
@@ -182,10 +182,6 @@ const Popup = () => {
           </>
         )}
       </SCStatistics>
-      {/* <div>
-        Test
-        <Doughnut data={exampleData} />
-      </div> */}
     </SCPopup>
   );
 };
