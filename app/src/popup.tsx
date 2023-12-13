@@ -16,12 +16,15 @@ import {
 } from "./util";
 import { URLS } from "./const";
 import styled from "styled-components";
+import AverageDailyTime from "./\bAverageDailyTime";
 
 ChartJS.register(ArcElement, Tooltip, Legend, LinearScale);
 
 const SCPopup = styled.div`
   display: flex;
 `;
+
+const SCStatistics = styled.div``;
 
 const exampleData = {
   labels: ["Red", "Red", "Blue", "Yellow"],
@@ -89,10 +92,10 @@ const Popup = () => {
             backgroundColor,
             summary,
             events: [
-              lastWeekData[idx].items.map(({ start, end, colorId, id }) => {
+              lastWeekData[idx].items?.map(({ start, end, colorId, id }) => {
                 return { start, end, colorId, id };
               }),
-              thisWeekData[idx].items.map(({ start, end, colorId, id }) => {
+              thisWeekData[idx].items?.map(({ start, end, colorId, id }) => {
                 return { start, end, colorId, id };
               }),
             ],
@@ -115,7 +118,7 @@ const Popup = () => {
           data: calendarData.map(({ events }) => {
             return getMinuites(
               events[0]
-                .filter((e) => e.start?.dateTime)
+                ?.filter((e) => e.start?.dateTime)
                 .map((e) => {
                   return (
                     new Date(e.end.dateTime).getTime() -
@@ -138,7 +141,7 @@ const Popup = () => {
           data: calendarData.map(({ events }) => {
             return getMinuites(
               events[1]
-                .filter((e) => e.start?.dateTime)
+                ?.filter((e) => e.start?.dateTime)
                 .map((e) => {
                   return (
                     new Date(e.end.dateTime).getTime() -
@@ -156,14 +159,29 @@ const Popup = () => {
 
   return (
     <SCPopup>
-      <div>
+      <SCStatistics>
         Last Week
-        {prevChartData && <Doughnut data={prevChartData} />}
-      </div>
-      <div>
-        This Week
-        {nextChartData && <Doughnut data={nextChartData} />}
-      </div>
+        {prevChartData && (
+          <>
+            <Doughnut data={prevChartData} />
+            <AverageDailyTime data={prevChartData} range={7} />
+          </>
+        )}
+      </SCStatistics>
+      <SCStatistics>
+        This Week - test
+        {nextChartData && (
+          <>
+            <Doughnut data={nextChartData} />
+            <AverageDailyTime
+              data={nextChartData}
+              range={
+                getTodayMidnight().getDate() - getThisMondayMidnight().getDate()
+              }
+            />
+          </>
+        )}
+      </SCStatistics>
       {/* <div>
         Test
         <Doughnut data={exampleData} />
