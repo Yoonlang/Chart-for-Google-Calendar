@@ -1,4 +1,4 @@
-import { URLS } from "./const";
+import { DAY_IN_MS, URLS } from "./const";
 
 export const getThisMondayMidnight = () => {
   const today = new Date();
@@ -46,4 +46,8 @@ export const getDateRangeEvents = async (calendarList, headers, prev, next) => {
     )
   );
   return await Promise.all(res.map(async (res) => await res.json()));
+};
+
+export const getDateRange = ([from, to]) => {
+  return (to - from) / DAY_IN_MS;
 };
