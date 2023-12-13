@@ -23,6 +23,29 @@ const SCPopup = styled.div`
   display: flex;
 `;
 
+const exampleData = {
+  labels: ["Red", "Red", "Blue", "Yellow"],
+  datasets: [
+    {
+      label: "# of Votes",
+      data: [6, 6, 19, 3],
+      backgroundColor: [
+        "rgba(54, 162, 235, 1)",
+        "rgba(255, 99, 132, 1)",
+        "rgba(54, 162, 235, 1)",
+        "rgba(255, 206, 86, 1)",
+      ],
+      borderColor: [
+        "rgba(255, 99, 132, 1)",
+        "rgba(255, 99, 132, 1)",
+        "rgba(54, 162, 235, 1)",
+        "rgba(255, 206, 86, 1)",
+      ],
+      borderWidth: 5,
+    },
+  ],
+};
+
 const Popup = () => {
   const [calendarData, setCalendarData] = useState<any>();
   const [prevChartData, setPrevChartData] = useState<any>();
@@ -84,15 +107,12 @@ const Popup = () => {
       return;
     }
 
-    console.log(calendarData);
-
     setPrevChartData({
       labels: calendarData.map((d) => d.summary),
       datasets: [
         {
           label: "Time spent(m)",
           data: calendarData.map(({ events }) => {
-            console.log("events", events, events[0]);
             return getMinuites(
               events[0]
                 .filter((e) => e.start?.dateTime)
@@ -144,6 +164,10 @@ const Popup = () => {
         This Week
         {nextChartData && <Doughnut data={nextChartData} />}
       </div>
+      {/* <div>
+        Test
+        <Doughnut data={exampleData} />
+      </div> */}
     </SCPopup>
   );
 };
