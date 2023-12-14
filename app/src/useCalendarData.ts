@@ -53,7 +53,7 @@ const formatAverageData = (calendarData) => {
   });
 };
 
-export const useCalendarData = (dateRanges = defaultDateRanges) => {
+export const getCalendarData = (dateRanges = defaultDateRanges) => {
   return new Promise((resolve) => {
     chrome.identity.getAuthToken({ interactive: true }, async (token) => {
       const headers = new Headers({

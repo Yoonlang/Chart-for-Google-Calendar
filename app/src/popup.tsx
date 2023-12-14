@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Chart as ChartJS,
@@ -9,7 +9,7 @@ import {
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import styled from "styled-components";
-import { useCalendarData } from "./useCalendarData";
+import { getCalendarData } from "./useCalendarData";
 import AverageDailyTime from "./AverageDailyTime";
 import { Loader } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
@@ -26,19 +26,19 @@ const SCPopup = styled.div`
 `;
 
 const Popup = () => {
+  const [data, setData] = useState(wrapPromise(getCalendarData()));
+
   return (
     <SCPopup>
       <Suspense fallback={<Loader size="sm" />}>
-        <DatasetList />
+        <DatasetList data={data} />
       </Suspense>
     </SCPopup>
   );
 };
 
-const resource = wrapPromise(useCalendarData());
-
-const DatasetList = () => {
-  const { chartData, averageData } = resource.read();
+const DatasetList = ({ data }) => {
+  const { chartData, averageData } = data.read();
 
   return (
     <>
