@@ -51,3 +51,33 @@ export const getDateRangeEvents = async (calendarList, headers, prev, next) => {
 export const getDateRange = ([from, to]) => {
   return (to - from) / DAY_IN_MS;
 };
+
+type PromiseStatus = "pending" | "success" | "error";
+
+export const wrapPromise = (promise) => {
+  let status: PromiseStatus = "pending";
+  let response;
+  let suspender = promise.then(
+    (r) => {
+      status = "success";
+      response = r;
+    },
+    (e) => {
+      status = "error";
+      response = e;
+    }
+  );
+
+  const read = () => {
+    switch (status) {
+      case "pending":
+        throw suspender;
+      case "error":
+        throw response;
+      default:
+        return response;
+    }
+  };
+
+  return { read };
+};

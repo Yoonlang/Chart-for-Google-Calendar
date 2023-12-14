@@ -13,11 +13,16 @@ import { useCalendarData } from "./useCalendarData";
 import AverageDailyTime from "./AverageDailyTime";
 import { Loader } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
+import { wrapPromise } from "./util";
 
 ChartJS.register(ArcElement, Tooltip, Legend, LinearScale);
 
 const SCPopup = styled.div`
   display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Popup = () => {
@@ -30,12 +35,14 @@ const Popup = () => {
   );
 };
 
+const resource = wrapPromise(useCalendarData());
+
 const DatasetList = () => {
-  const { chartData, averageData } = useCalendarData();
+  const { chartData, averageData } = resource.read();
 
   return (
     <>
-      {chartData.map((d, idx) => {
+      {chartData?.map((d, idx) => {
         return (
           <div>
             Dataset {idx + 1}

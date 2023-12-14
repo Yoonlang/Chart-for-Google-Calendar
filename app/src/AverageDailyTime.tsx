@@ -32,7 +32,7 @@ const AverageDailyTime = ({ data }) => {
   return (
     <SCAverageDailyTime>
       Average Daily Time
-      {backgroundColor.map((c, idx) => {
+      {backgroundColor?.map((c, idx) => {
         return (
           <SCAverageDailyTimeDetail color={c}>
             <div className="color"></div>
