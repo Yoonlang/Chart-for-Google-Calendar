@@ -1,20 +1,5 @@
 import { DAY_IN_MS, MIN_IN_MS, URLS } from "./const";
-import {
-  getDateRange,
-  getDateRangeEvents,
-  getHHMM,
-  getMinuites,
-  getThisMondayMidnight,
-  getTodayMidnight,
-} from "./util";
-
-const defaultDateRanges: [Date, Date][] = [
-  [
-    new Date(getThisMondayMidnight().getTime() - 7 * DAY_IN_MS),
-    getThisMondayMidnight(),
-  ],
-  [getThisMondayMidnight(), getTodayMidnight()],
-];
+import { getDateRangeEvents, getHHMM, getMinuites } from "./util";
 
 const formatChartData = (calendarData) => {
   return calendarData.map((d) => {
@@ -53,8 +38,9 @@ const formatAverageData = (calendarData) => {
   });
 };
 
-export const getCalendarData = (dateRanges = defaultDateRanges) => {
+export const getCalendarData = (dateRanges) => {
   return new Promise((resolve) => {
+    // indexedDB 데이터 먼저 확인
     chrome.identity.getAuthToken({ interactive: true }, async (token) => {
       const headers = new Headers({
         Authorization: `Bearer ${token}`,
@@ -79,9 +65,10 @@ export const getCalendarData = (dateRanges = defaultDateRanges) => {
       );
 
       const calendarData = dataset.map((s, idx) => {
-        const range = getDateRange(dateRanges[idx]);
+        const [from, to] = dateRanges[idx];
         return {
-          range,
+          range: (to.getTime() - from.getTime()) / DAY_IN_MS,
+          dateRange: [from, to.setTime(to.getTime() - DAY_IN_MS)],
           calendarList: calendarList.map((c, idx2) => {
             const { id, backgroundColor, summary } = c;
             const events = s[idx2].items?.map((i) => {

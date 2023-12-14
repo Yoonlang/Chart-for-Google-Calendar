@@ -3,7 +3,7 @@
 
   "name": "Chart for Google Calendar",
   "description": "Support statistics for Google Calendar by chart",
-  "version": "1.04",
+  "version": "1.05",
 
   "options_ui": {
     "page": "options.html"

@@ -14,6 +14,9 @@ import AverageDailyTime from "./AverageDailyTime";
 import { Loader } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
 import { wrapPromise } from "./util";
+import DatasetHead from "./DatasetHead";
+import { DAY_IN_MS } from "./const";
+import { getThisMondayMidnight, getTodayMidnight } from "./util";
 
 ChartJS.register(ArcElement, Tooltip, Legend, LinearScale);
 
@@ -25,31 +28,52 @@ const SCPopup = styled.div`
   justify-content: center;
 `;
 
+const defaultDateRanges: [Date, Date][] = [
+  [
+    new Date(getThisMondayMidnight().getTime() - 7 * DAY_IN_MS),
+    getThisMondayMidnight(),
+  ],
+  [getThisMondayMidnight(), getTodayMidnight()],
+];
+
 const Popup = () => {
-  const [data, setData] = useState(wrapPromise(getCalendarData()));
+  const [dateRanges, setDateRanges] = useState(defaultDateRanges);
+  const [data, setData] = useState(
+    wrapPromise(getCalendarData(defaultDateRanges))
+  );
+
+  const refreshData = (dateRange, idx) => {
+    const [from, to] = dateRange;
+    const newDateRanges = [...dateRanges];
+    newDateRanges[idx] = [from, new Date(to.getTime() + DAY_IN_MS)];
+    setDateRanges(newDateRanges);
+    setData(wrapPromise(getCalendarData(newDateRanges)));
+  };
 
   return (
     <SCPopup>
       <Suspense fallback={<Loader size="sm" />}>
-        <DatasetList data={data} />
+        <DatasetList data={data} refreshData={refreshData} />
       </Suspense>
     </SCPopup>
   );
 };
 
-const DatasetList = ({ data }) => {
-  const { chartData, averageData } = data.read();
+const DatasetList = (prop) => {
+  const { data, refreshData } = prop;
+  const { calendarData, chartData, averageData } = data.read();
 
   return (
     <>
       {chartData?.map((d, idx) => {
         return (
           <div>
-            Dataset {idx + 1}
-            <>
-              <Doughnut data={d} />
-              <AverageDailyTime data={averageData[idx]} />
-            </>
+            <DatasetHead
+              data={{ idx, dateRange: calendarData[idx].dateRange }}
+              refreshData={refreshData}
+            />
+            <Doughnut data={d} />
+            <AverageDailyTime data={averageData[idx]} />
           </div>
         );
       })}
