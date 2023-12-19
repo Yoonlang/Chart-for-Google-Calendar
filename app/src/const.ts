@@ -24,3 +24,31 @@ export const COLORS_IN_EVENT = [
 ] as const;
 
 export type DateRange = [Dayjs, Dayjs][];
+
+export interface HeaderData {
+  datasetIdx: number;
+  dateRange: [Dayjs, Dayjs];
+}
+
+interface ChartDataset {
+  label: string;
+  data: number[];
+  backgroundColor: string[];
+}
+
+export interface ChartData {
+  labels: string[];
+  datasets: ChartDataset[];
+}
+
+export interface AverageData {
+  backgroundColor: string[];
+  averageDailyTime: string[];
+  percentOfChange: string[];
+}
+
+export interface DatasetContent {
+  headerData: HeaderData;
+  chartData: ChartData;
+  averageData: AverageData;
+}

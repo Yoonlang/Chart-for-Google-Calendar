@@ -1,6 +1,7 @@
 import styled from "styled-components";
+import { AverageData } from "./const";
 
-const formatNumber = (num) => {
+const formatNumber = (num: number) => {
   return num > 0 ? `+${num}%` : `${num}%`;
 };
 
@@ -27,7 +28,11 @@ const SCAverageDailyTimeDetail = styled.div`
   }
 `;
 
-const AverageDailyTime = ({ data }) => {
+interface props {
+  data: AverageData;
+}
+
+const AverageDailyTime: React.FC<props> = ({ data }) => {
   const { backgroundColor, averageDailyTime, percentOfChange } = data;
   return (
     <SCAverageDailyTime>
@@ -38,8 +43,10 @@ const AverageDailyTime = ({ data }) => {
             <div className="color"></div>
             <div>{averageDailyTime[idx]}</div>
             {percentOfChange[idx] && (
-              <div className={percentOfChange[idx] >= 0 ? "plus" : "minus"}>
-                {formatNumber(percentOfChange[idx])}
+              <div
+                className={Number(percentOfChange[idx]) >= 0 ? "plus" : "minus"}
+              >
+                {formatNumber(Number(percentOfChange[idx]))}
               </div>
             )}
           </SCAverageDailyTimeDetail>

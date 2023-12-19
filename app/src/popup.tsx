@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Chart as ChartJS,
@@ -7,16 +7,13 @@ import {
   Legend,
   LinearScale,
 } from "chart.js";
-import { Doughnut } from "react-chartjs-2";
 import styled from "styled-components";
-import { getCalendarData } from "./getCalendarData";
-import AverageDailyTime from "./AverageDailyTime";
+import { getAllDatasetContent } from "./getCalendarData";
 import { Loader } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
-import { wrapPromise } from "./util";
-import DatasetHead from "./DatasetHead";
-import dayjs, { Dayjs } from "dayjs";
-import { DateRange } from "./const";
+import dayjs from "dayjs";
+import { DatasetContent, DateRange } from "./const";
+import Dataset from "./Dataset";
 
 ChartJS.register(ArcElement, Tooltip, Legend, LinearScale);
 dayjs.Ls.en.weekStart = 1;
@@ -37,47 +34,43 @@ const defaultDateRanges: DateRange = [
 ];
 
 const Popup = () => {
-  const [dateRanges, setDateRanges] = useState(defaultDateRanges);
-  const [data, setData] = useState(
-    wrapPromise(getCalendarData(defaultDateRanges))
-  );
+  const [datasetContentList, setDatasetContentList] = useState<
+    DatasetContent[] | null
+  >(null);
 
-  const refreshData = (dateRange: [Dayjs, Dayjs], idx: number) => {
-    const [from, to] = dateRange;
-    const newDateRanges = [...dateRanges];
-    newDateRanges[idx] = [from, to.endOf("d")];
-    setDateRanges(newDateRanges);
-    setData(wrapPromise(getCalendarData(newDateRanges)));
+  useEffect(() => {
+    const handleAllDatasetContent = async () => {
+      const res = await getAllDatasetContent(defaultDateRanges);
+      setDatasetContentList(res);
+    };
+    handleAllDatasetContent();
+  }, []);
+
+  const handleDatasetContent = (
+    datasetContent: DatasetContent,
+    idx: number
+  ) => {
+    setDatasetContentList((o) =>
+      o.map((c, idx2) => (idx === idx2 ? datasetContent : c))
+    );
   };
+
+  if (!datasetContentList) {
+    return <Loader size="sm" />;
+  }
 
   return (
     <SCPopup>
-      <Suspense fallback={<Loader size="sm" />}>
-        <DatasetList data={data} refreshData={refreshData} />
-      </Suspense>
-    </SCPopup>
-  );
-};
-
-const DatasetList = (prop) => {
-  const { data, refreshData } = prop;
-  const { calendarData, chartData, averageData } = data.read();
-
-  return (
-    <>
-      {chartData?.map((d, idx) => {
+      {datasetContentList.map((c, idx) => {
         return (
-          <div>
-            <DatasetHead
-              data={{ idx, dateRange: calendarData[idx].dateRange }}
-              refreshData={refreshData}
-            />
-            <Doughnut data={d} />
-            <AverageDailyTime data={averageData[idx]} />
-          </div>
+          <Dataset
+            key={idx}
+            datasetContent={c}
+            handleDatasetContent={handleDatasetContent}
+          />
         );
       })}
-    </>
+    </SCPopup>
   );
 };
 

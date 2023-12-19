@@ -1,25 +1,31 @@
-import dayjs from "dayjs";
 import { DateRangePicker } from "rsuite";
 import styled from "styled-components";
+import { DatasetContent, HeaderData } from "./const";
 
 const SCDatasetHead = styled.div`
   display: flex;
   gap: 10px;
 `;
 
-const DatasetHead = (prop) => {
-  const { data, refreshData } = prop;
-  const { idx, dateRange } = data;
+interface props {
+  data: HeaderData;
+  handleDatasetContent: (datasetContent: DatasetContent, idx: number) => void;
+}
+
+const DatasetHead: React.FC<props> = ({ data, handleDatasetContent }) => {
+  const { datasetIdx, dateRange } = data;
   const [from, to] = dateRange;
 
   return (
     <SCDatasetHead>
-      Dataset {idx + 1}
+      Dataset {datasetIdx + 1}
       <DateRangePicker
         defaultValue={[from.toDate(), to.toDate()]}
         onChange={(v) => {
           const [from, to] = v;
-          refreshData([dayjs(from), dayjs(to)], idx);
+          // from, to에 대해서 getDatasetContent 한다.
+          // 그동안 이 컴포넌트는 Loading을 띄운다.
+          // handleDatasetContent({} as DatasetContent, 1);
         }}
       />
     </SCDatasetHead>

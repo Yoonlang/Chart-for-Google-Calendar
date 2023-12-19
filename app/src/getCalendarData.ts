@@ -1,47 +1,64 @@
 import dayjs from "dayjs";
-import { DateRange, MIN_IN_MS, URLS } from "./const";
+import {
+  AverageData,
+  ChartData,
+  DatasetContent,
+  DateRange,
+  HeaderData,
+  MIN_IN_MS,
+  URLS,
+} from "./const";
 import { getDateRangeEvents, getHHMM, getMinuites } from "./util";
 
-const formatChartData = (calendarData) => {
-  return calendarData.map((d) => {
-    const { calendarList } = d;
-    return {
-      labels: calendarList.map((l) => l.summary),
-      datasets: [
-        {
-          label: "Time spent(m)",
-          data: calendarList.map((l) => l.eventsTotalTime),
-          backgroundColor: calendarList.map((l) => l.backgroundColor),
-        },
-      ],
-    };
-  });
+const formatHeaderData = (calendarData, idx: number): HeaderData => {
+  return {
+    datasetIdx: idx,
+    dateRange: calendarData.dateRange,
+  };
 };
 
-const formatAverageData = (calendarData) => {
-  return calendarData.map((d, idx) => {
-    const { calendarList, range } = d;
-    return {
-      backgroundColor: calendarList.map((l) => l.backgroundColor),
-      averageDailyTime: calendarList.map((l) =>
-        getHHMM(Math.floor(l.eventsTotalTime / range) * MIN_IN_MS)
-      ),
-      percentOfChange: calendarList.map((l, idx2) => {
-        if (idx === 0) {
-          return null;
-        }
-        const { calendarList: cl, range: r } = calendarData[idx - 1];
-        const currentTime = l.eventsTotalTime / range;
-        const prevTime = cl[idx2].eventsTotalTime / r;
-        return (((currentTime - prevTime) / prevTime) * 100).toFixed(1);
-      }),
-    };
-  });
+const formatChartData = ({ calendarList }): ChartData => {
+  return {
+    labels: calendarList.map((l) => l.summary),
+    datasets: [
+      {
+        label: "Time spent(m)",
+        data: calendarList.map((l) => l.eventsTotalTime),
+        backgroundColor: calendarList.map((l) => l.backgroundColor),
+      },
+    ],
+  };
 };
 
-export const getCalendarData = (dateRanges: DateRange) => {
-  return new Promise((resolve) => {
-    // indexedDB 데이터 먼저 확인
+const formatAverageData = (
+  prevCalendarData,
+  calendarData,
+  idx: number
+): AverageData => {
+  const { calendarList, range } = calendarData;
+  return {
+    backgroundColor: calendarList.map((l) => l.backgroundColor),
+    averageDailyTime: calendarList.map((l) =>
+      getHHMM(Math.floor(l.eventsTotalTime / range) * MIN_IN_MS)
+    ),
+    percentOfChange: calendarList.map((l, idx2) => {
+      if (!prevCalendarData) {
+        return null;
+      }
+      const { calendarList: cl, range: r } = prevCalendarData;
+      const currentTime = l.eventsTotalTime / range;
+      const prevTime = cl[idx2].eventsTotalTime / r;
+      return (((currentTime - prevTime) / prevTime) * 100).toFixed(1);
+    }),
+  };
+};
+
+export const getAllDatasetContent = (
+  dateRanges: DateRange
+): Promise<DatasetContent[]> => {
+  // indexedDB 데이터 먼저 확인
+  return new Promise<DatasetContent[]>((resolve) => {
+    const res = [];
     chrome.identity.getAuthToken({ interactive: true }, async (token) => {
       const headers = new Headers({
         Authorization: `Bearer ${token}`,
@@ -94,11 +111,21 @@ export const getCalendarData = (dateRanges: DateRange) => {
           }),
         };
       });
-      resolve({
-        calendarData,
-        chartData: formatChartData(calendarData),
-        averageData: formatAverageData(calendarData),
+
+      calendarData.forEach((d, idx) => {
+        res[idx] = {
+          headerData: formatHeaderData(d, idx),
+          chartData: formatChartData(d),
+          averageData: formatAverageData(
+            idx === 0 ? null : calendarData[idx - 1],
+            d,
+            idx
+          ),
+        };
       });
+      resolve(res);
     });
   });
 };
+
+export const getDatasetContent = (dateRanges: DateRange) => {};
