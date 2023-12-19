@@ -9,16 +9,19 @@ import {
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import styled from "styled-components";
-import { getCalendarData } from "./useCalendarData";
+import { getCalendarData } from "./getCalendarData";
 import AverageDailyTime from "./AverageDailyTime";
 import { Loader } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
 import { wrapPromise } from "./util";
 import DatasetHead from "./DatasetHead";
-import { DAY_IN_MS } from "./const";
-import { getThisMondayMidnight, getTodayMidnight } from "./util";
+import dayjs, { Dayjs } from "dayjs";
+import { DateRange } from "./const";
 
 ChartJS.register(ArcElement, Tooltip, Legend, LinearScale);
+dayjs.Ls.en.weekStart = 1;
+
+const now = dayjs();
 
 const SCPopup = styled.div`
   display: flex;
@@ -28,12 +31,9 @@ const SCPopup = styled.div`
   justify-content: center;
 `;
 
-const defaultDateRanges: [Date, Date][] = [
-  [
-    new Date(getThisMondayMidnight().getTime() - 7 * DAY_IN_MS),
-    getThisMondayMidnight(),
-  ],
-  [getThisMondayMidnight(), getTodayMidnight()],
+const defaultDateRanges: DateRange = [
+  [now.startOf("w").subtract(1, "w"), now.startOf("w").subtract(1, "ms")],
+  [now.startOf("w"), now.startOf("d").subtract(1, "ms")],
 ];
 
 const Popup = () => {
@@ -42,10 +42,10 @@ const Popup = () => {
     wrapPromise(getCalendarData(defaultDateRanges))
   );
 
-  const refreshData = (dateRange, idx) => {
+  const refreshData = (dateRange: [Dayjs, Dayjs], idx: number) => {
     const [from, to] = dateRange;
     const newDateRanges = [...dateRanges];
-    newDateRanges[idx] = [from, new Date(to.getTime() + DAY_IN_MS)];
+    newDateRanges[idx] = [from, to.endOf("d")];
     setDateRanges(newDateRanges);
     setData(wrapPromise(getCalendarData(newDateRanges)));
   };

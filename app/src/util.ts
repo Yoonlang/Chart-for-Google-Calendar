@@ -1,21 +1,4 @@
-import { DAY_IN_MS, URLS } from "./const";
-
-export const getThisMondayMidnight = () => {
-  const today = new Date();
-  const dayOfWeek = today.getDay();
-
-  const daysUntilMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - daysUntilMonday);
-  monday.setHours(0, 0, 0, 0);
-  return monday;
-};
-
-export const getTodayMidnight = () => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return today;
-};
+import { URLS } from "./const";
 
 export const getHHMM = (ms) => {
   const seconds = Math.floor(ms / 1000);
@@ -46,10 +29,6 @@ export const getDateRangeEvents = async (calendarList, headers, prev, next) => {
     )
   );
   return await Promise.all(res.map(async (res) => await res.json()));
-};
-
-export const getDateRange = ([from, to]) => {
-  return (to - from) / DAY_IN_MS;
 };
 
 type PromiseStatus = "pending" | "success" | "error";

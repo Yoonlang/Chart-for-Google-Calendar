@@ -1,4 +1,5 @@
-import { DAY_IN_MS, MIN_IN_MS, URLS } from "./const";
+import dayjs from "dayjs";
+import { DateRange, MIN_IN_MS, URLS } from "./const";
 import { getDateRangeEvents, getHHMM, getMinuites } from "./util";
 
 const formatChartData = (calendarData) => {
@@ -38,7 +39,7 @@ const formatAverageData = (calendarData) => {
   });
 };
 
-export const getCalendarData = (dateRanges) => {
+export const getCalendarData = (dateRanges: DateRange) => {
   return new Promise((resolve) => {
     // indexedDB 데이터 먼저 확인
     chrome.identity.getAuthToken({ interactive: true }, async (token) => {
@@ -67,8 +68,8 @@ export const getCalendarData = (dateRanges) => {
       const calendarData = dataset.map((s, idx) => {
         const [from, to] = dateRanges[idx];
         return {
-          range: (to.getTime() - from.getTime()) / DAY_IN_MS,
-          dateRange: [from, to.setTime(to.getTime() - DAY_IN_MS)],
+          range: to.diff(from, "d") + 1,
+          dateRange: dateRanges[idx],
           calendarList: calendarList.map((c, idx2) => {
             const { id, backgroundColor, summary } = c;
             const events = s[idx2].items?.map((i) => {
@@ -84,12 +85,9 @@ export const getCalendarData = (dateRanges) => {
               eventsTotalTime: getMinuites(
                 events
                   ?.filter((e) => e.start?.dateTime)
-                  .map((e) => {
-                    return (
-                      new Date(e.end.dateTime).getTime() -
-                      new Date(e.start.dateTime).getTime()
-                    );
-                  })
+                  .map((e) =>
+                    dayjs(e.end.dateTime).diff(dayjs(e.start.dateTime), "ms")
+                  )
                   .reduce((acc, cur) => acc + cur, 0)
               ),
             };
