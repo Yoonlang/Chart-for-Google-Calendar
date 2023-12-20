@@ -3,6 +3,7 @@ import DatasetHead from "./DatasetHead";
 import { useState } from "react";
 import DatasetBody from "./DatasetBody";
 import styled from "styled-components";
+import { Loader } from "rsuite";
 
 interface props {
   datasetContent: DatasetContent;
@@ -14,13 +15,16 @@ const DatasetBodyContainer = styled.div`
   position: relative;
   min-width: 300px;
   min-height: 420px;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
 `;
 
 const Dataset: React.FC<props> = ({ datasetContent, handleDatasetContent }) => {
-  const { headerData, chartData, averageData } = datasetContent;
+  const { headerData, chartContent, averageContent } = datasetContent;
   const [isOpenDetailDataset, setIsOpenDetailDataset] = useState(false);
   const [innerDatasetIdx, setInnerDatasetIdx] = useState<number | null>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const openDetailDataset = (idx: number) => {
     setInnerDatasetIdx(idx);
@@ -37,20 +41,27 @@ const Dataset: React.FC<props> = ({ datasetContent, handleDatasetContent }) => {
       <DatasetHead
         data={headerData}
         handleDatasetContent={handleDatasetContent}
+        setIsLoading={setIsLoading}
       />
       <DatasetBodyContainer>
-        <DatasetBody.Main
-          chartData={chartData}
-          averageData={averageData}
-          isOpenDetailDataset={isOpenDetailDataset}
-          openDetailDataset={openDetailDataset}
-        />
-        <DatasetBody.Inner
-          chartData={chartData.inner[innerDatasetIdx]}
-          averageData={averageData.inner[innerDatasetIdx]}
-          isOpenDetailDataset={isOpenDetailDataset}
-          closeDetailDataset={closeDetailDataset}
-        />
+        {isLoading ? (
+          <Loader size="lg" />
+        ) : (
+          <>
+            <DatasetBody.Main
+              chartContent={chartContent}
+              averageContent={averageContent}
+              isOpenDetailDataset={isOpenDetailDataset}
+              openDetailDataset={openDetailDataset}
+            />
+            <DatasetBody.Inner
+              chartData={chartContent.inner[innerDatasetIdx]}
+              averageData={averageContent.inner[innerDatasetIdx]}
+              isOpenDetailDataset={isOpenDetailDataset}
+              closeDetailDataset={closeDetailDataset}
+            />
+          </>
+        )}
       </DatasetBodyContainer>
     </div>
   );

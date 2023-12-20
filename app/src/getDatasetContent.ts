@@ -1,19 +1,25 @@
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import {
   AverageData,
   COLORS_IN_EVENT,
+  CalendarContent,
+  CalendarData,
+  CalendarMetadata,
   ChartData,
   DatasetContent,
   DateRange,
+  Event,
   HeaderData,
   MIN_IN_MS,
   URLS,
 } from "./const";
 import { getDateRangeEvents, getHHMM, getMinuites } from "./util";
 
-const getInnerTimeData = (calendarList) => {
-  const res = [];
-  calendarList.forEach((c) => {
+const getInnerTimeDataList = (
+  calendarDataList: CalendarData[]
+): Record<string, number>[] => {
+  const res: Record<string, number>[] = [];
+  calendarDataList.forEach((c) => {
     const obj = {};
     const { events } = c;
     events.forEach((e) => {
@@ -52,27 +58,35 @@ const getInnerTimeData = (calendarList) => {
   return res;
 };
 
-const formatHeaderData = (calendarData, idx: number): HeaderData => {
+const formatHeaderData = (
+  calendarContent: CalendarContent,
+  idx: number,
+  calendarMetadataList: CalendarMetadata[]
+): HeaderData => {
   return {
     datasetIdx: idx,
-    dateRange: calendarData.dateRange,
+    dateRange: calendarContent.dateRange,
+    calendarMetadataList,
   };
 };
 
-const formatChartData = ({ calendarList }): ChartData => {
+const formatChartData = ({ calendarDataList }: CalendarContent): ChartData => {
   return {
-    labels: calendarList.map((l) => l.summary),
+    labels: calendarDataList.map((l) => l.summary),
     datasets: [
       {
         label: "Time spent(m)",
-        data: calendarList.map((l) => l.eventsTotalTime),
-        backgroundColor: calendarList.map((l) => l.backgroundColor),
+        data: calendarDataList.map((l) => l.eventsTotalTime),
+        backgroundColor: calendarDataList.map((l) => l.backgroundColor),
       },
     ],
   };
 };
 
-const formatInnerChartData = ({ calendarList }, innerTimeData): ChartData[] => {
+const formatInnerChartData = (
+  { calendarDataList }: CalendarContent,
+  innerTimeData: Record<string, number>[]
+): ChartData[] => {
   return innerTimeData.map((d, idx) => {
     return {
       labels: Object.keys(d).map((key) => {
@@ -84,7 +98,7 @@ const formatInnerChartData = ({ calendarList }, innerTimeData): ChartData[] => {
           data: Object.values(d).map((value) => value),
           backgroundColor: Object.keys(d).map((key) => {
             return key === "main"
-              ? calendarList[idx].backgroundColor
+              ? calendarDataList[idx].backgroundColor
               : COLORS_IN_EVENT[key];
           }),
         },
@@ -93,18 +107,21 @@ const formatInnerChartData = ({ calendarList }, innerTimeData): ChartData[] => {
   });
 };
 
-const formatAverageData = (prevCalendarData, calendarData): AverageData => {
-  const { calendarList, range } = calendarData;
+const formatAverageData = (
+  prevCalendarContent: CalendarContent | null,
+  calendarContent: CalendarContent
+): AverageData => {
+  const { calendarDataList, range } = calendarContent;
   return {
-    backgroundColor: calendarList.map((l) => l.backgroundColor),
-    averageDailyTime: calendarList.map((l) =>
+    backgroundColor: calendarDataList.map((l) => l.backgroundColor),
+    averageDailyTime: calendarDataList.map((l) =>
       getHHMM(Math.floor(l.eventsTotalTime / range) * MIN_IN_MS)
     ),
-    percentOfChange: calendarList.map((l, idx2) => {
-      if (!prevCalendarData) {
+    percentOfChange: calendarDataList.map((l, idx2) => {
+      if (!prevCalendarContent) {
         return null;
       }
-      const { calendarList: cl, range: r } = prevCalendarData;
+      const { calendarDataList: cl, range: r } = prevCalendarContent;
       const currentTime = l.eventsTotalTime / range;
       const prevTime = cl[idx2].eventsTotalTime / r;
       return (((currentTime - prevTime) / prevTime) * 100).toFixed(1);
@@ -113,17 +130,17 @@ const formatAverageData = (prevCalendarData, calendarData): AverageData => {
 };
 
 const formatInnerAverageData = (
-  prevCalendarData,
-  calendarData,
-  prevInnerTimeData,
-  innerTimeData
-) => {
-  const { calendarList, range } = calendarData;
-  return innerTimeData.map((d, idx) => {
+  prevCalendarContent: CalendarContent | null,
+  calendarContent: CalendarContent,
+  prevInnerTimeDataList: Record<string, number>[] | null,
+  innerTimeDataList: Record<string, number>[]
+): AverageData[] => {
+  const { calendarDataList, range } = calendarContent;
+  return innerTimeDataList.map((d, idx) => {
     return {
       backgroundColor: Object.keys(d).map((key) =>
         key === "main"
-          ? calendarList[idx].backgroundColor
+          ? calendarDataList[idx].backgroundColor
           : COLORS_IN_EVENT[key]
       ),
       averageDailyTime: Object.values(d).map((value) =>
@@ -131,14 +148,92 @@ const formatInnerAverageData = (
       ),
       percentOfChange: Object.entries(d).map((entry) => {
         const [key, value] = entry;
-        if (!prevInnerTimeData || !prevCalendarData) {
+        if (!prevInnerTimeDataList || !prevCalendarContent) {
           return null;
         }
         const currentTime = (value as number) / range;
         const prevTime =
-          (prevInnerTimeData[idx][key] as number) / prevCalendarData.range;
+          (prevInnerTimeDataList[idx][key] as number) /
+          prevCalendarContent.range;
         return (((currentTime - prevTime) / prevTime) * 100).toFixed(1);
       }),
+    };
+  });
+};
+
+export const handleDatasetPercent = (
+  datasetContentList: DatasetContent[],
+  datasetIdx: number
+) => {
+  // datasetidx가 바뀐 주체.
+  // 바꾼 것의 퍼센트 바꾸기 (앞에꺼 보고)
+  // 바꾼 것의 뒤에거 퍼센트 바꾸기 (나 보고)
+};
+
+const getCalendarContentList = (
+  eventDataList: any,
+  dateRanges: DateRange,
+  calendarMetadataList: CalendarMetadata[]
+): CalendarContent[] => {
+  return eventDataList.map((s, idx) => {
+    const [from, to] = dateRanges[idx];
+    return {
+      range: to.diff(from, "d") + 1,
+      dateRange: dateRanges[idx],
+      calendarDataList: calendarMetadataList.map((c, idx2) => {
+        const { id, backgroundColor, summary } = c;
+        const events: Event[] = s[idx2].items
+          ?.filter((e) => e.start?.dateTime)
+          ?.map((e) => {
+            const { start, end, colorId, id } = e;
+            return { start, end, colorId, id };
+          });
+
+        return {
+          id,
+          backgroundColor,
+          summary,
+          events,
+          eventsTotalTime: getMinuites(
+            events
+              .map((e) =>
+                dayjs(e.end.dateTime).diff(dayjs(e.start.dateTime), "ms")
+              )
+              .reduce((acc, cur) => acc + cur, 0)
+          ),
+        };
+      }),
+    };
+  });
+};
+
+const handleDatasetContent = (
+  res: DatasetContent[],
+  calendarContentList: CalendarContent[],
+  calendarMetadataList: CalendarMetadata[]
+) => {
+  calendarContentList.forEach((d, idx) => {
+    const innerTimeDataList = getInnerTimeDataList(d.calendarDataList);
+    res[idx] = {
+      calendarContentList: [],
+      innerTimeDataList,
+      headerData: formatHeaderData(d, idx, calendarMetadataList),
+      chartContent: {
+        main: formatChartData(d),
+        inner: formatInnerChartData(d, innerTimeDataList),
+      },
+      averageContent: {
+        main: formatAverageData(
+          idx === 0 ? null : calendarContentList[idx - 1],
+          d
+        ),
+        inner: formatInnerAverageData(
+          idx === 0 ? null : calendarContentList[idx - 1],
+          d,
+          idx === 0 ? null : res[idx - 1].innerTimeDataList,
+          innerTimeDataList
+        ),
+      },
     };
   });
 };
@@ -159,12 +254,20 @@ export const getAllDatasetContent = (
         headers,
       });
       const calendarListData = await calendarListResponse.json();
-      const calendarList = calendarListData.items;
+      const calendarMetadataList: CalendarMetadata[] =
+        calendarListData.items.map((i) => {
+          const { id, backgroundColor, summary } = i;
+          return {
+            id,
+            backgroundColor,
+            summary,
+          };
+        });
 
-      const dataset = await Promise.all(
+      const eventDataList = await Promise.all(
         dateRanges.map((r) =>
           getDateRangeEvents(
-            calendarList,
+            calendarMetadataList.map((c) => c.id),
             headers,
             r[0].toISOString(),
             r[1].toISOString()
@@ -172,63 +275,45 @@ export const getAllDatasetContent = (
         )
       );
 
-      const calendarData = dataset.map((s, idx) => {
-        const [from, to] = dateRanges[idx];
-        return {
-          range: to.diff(from, "d") + 1,
-          dateRange: dateRanges[idx],
-          calendarList: calendarList.map((c, idx2) => {
-            const { id, backgroundColor, summary } = c;
-            const events = s[idx2].items
-              ?.map((i) => {
-                const { start, end, colorId, id } = i;
-                return { start, end, colorId, id };
-              })
-              ?.filter((e) => e.start?.dateTime);
+      const calendarContentList = getCalendarContentList(
+        eventDataList,
+        dateRanges,
+        calendarMetadataList
+      );
 
-            return {
-              id,
-              backgroundColor,
-              summary,
-              events,
-              eventsTotalTime: getMinuites(
-                events
-                  .map((e) =>
-                    dayjs(e.end.dateTime).diff(dayjs(e.start.dateTime), "ms")
-                  )
-                  .reduce((acc, cur) => acc + cur, 0)
-              ),
-            };
-          }),
-        };
-      });
-
-      calendarData.forEach((d, idx) => {
-        const innerTimeData = getInnerTimeData(d.calendarList);
-        res[idx] = {
-          innerTimeData,
-          headerData: formatHeaderData(d, idx),
-          chartData: {
-            main: formatChartData(d),
-            inner: formatInnerChartData(d, innerTimeData),
-          },
-          averageData: {
-            main: formatAverageData(
-              idx === 0 ? null : calendarData[idx - 1],
-              d
-            ),
-            inner: formatInnerAverageData(
-              idx === 0 ? null : calendarData[idx - 1],
-              d,
-              idx === 0 ? null : res[idx - 1].innerTimeData,
-              innerTimeData
-            ),
-          },
-        };
-      });
+      handleDatasetContent(res, calendarContentList, calendarMetadataList);
       resolve(res);
     });
   });
 };
 
-export const getDatasetContent = (dateRanges: DateRange) => {};
+export const getDatasetContent = (
+  dateRange: [Dayjs, Dayjs],
+  calendarMetadataList: CalendarMetadata[]
+) => {
+  return new Promise<DatasetContent>((resolve) => {
+    const res: DatasetContent[] = [];
+    chrome.identity.getAuthToken({ interactive: true }, async (token) => {
+      const headers = new Headers({
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      });
+
+      const eventData = await getDateRangeEvents(
+        calendarMetadataList.map((c) => c.id),
+        headers,
+        dateRange[0].toISOString(),
+        dateRange[1].toISOString()
+      );
+
+      const calendarContentList = getCalendarContentList(
+        [eventData],
+        [dateRange],
+        calendarMetadataList
+      );
+
+      handleDatasetContent(res, calendarContentList, calendarMetadataList);
+      resolve(res[0]);
+    });
+  });
+};

@@ -27,6 +27,7 @@ export type DateRange = [Dayjs, Dayjs][];
 
 export interface HeaderData {
   datasetIdx: number;
+  calendarMetadataList: CalendarMetadata[];
   dateRange: [Dayjs, Dayjs];
 }
 
@@ -47,14 +48,39 @@ export interface AverageData {
   percentOfChange: string[];
 }
 
+export interface CalendarMetadata {
+  id: string;
+  backgroundColor: string;
+  summary: string;
+}
+
+export interface Event {
+  start: any;
+  end: any;
+  colorId: string | null | undefined;
+  id: string;
+}
+
+export interface CalendarData extends CalendarMetadata {
+  events: Event[];
+  eventsTotalTime: number;
+}
+
+export interface CalendarContent {
+  range: number;
+  dateRange: [Dayjs, Dayjs];
+  calendarDataList: CalendarData[];
+}
+
 export interface DatasetContent {
-  innerTimeData: Record<string, number>[];
+  calendarContentList: CalendarContent[];
+  innerTimeDataList: Record<string, number>[];
   headerData: HeaderData;
-  chartData: {
+  chartContent: {
     main: ChartData;
     inner: ChartData[];
   };
-  averageData: {
+  averageContent: {
     main: AverageData;
     inner: AverageData[];
   };

@@ -17,11 +17,16 @@ export const getMinuites = (ms) => {
   return minutes;
 };
 
-export const getDateRangeEvents = async (calendarList, headers, prev, next) => {
+export const getDateRangeEvents = async (
+  calendarIdList,
+  headers,
+  prev,
+  next
+) => {
   const res = await Promise.all(
-    calendarList.map((c) =>
+    calendarIdList.map((cid) =>
       fetch(
-        `${URLS.EVENTS_PRE}${c.id}${URLS.EVENTS_SUF}/?timeMin=${prev}&timeMax=${next}&maxResults=1000`,
+        `${URLS.EVENTS_PRE}${cid}${URLS.EVENTS_SUF}/?timeMin=${prev}&timeMax=${next}&maxResults=1000`,
         {
           headers,
         }

@@ -34,11 +34,11 @@ const DatasetBodyInnerContainer = styled(DatasetBodyCommonContainer)<{
 `;
 
 interface MainProps {
-  chartData: {
+  chartContent: {
     main: ChartData;
     inner: ChartData[];
   };
-  averageData: {
+  averageContent: {
     main: AverageData;
     inner: AverageData[];
   };
@@ -47,15 +47,15 @@ interface MainProps {
 }
 
 const DatasetBodyMain: React.FC<MainProps> = ({
-  chartData,
-  averageData,
+  chartContent,
+  averageContent,
   openDetailDataset,
   isOpenDetailDataset,
 }) => {
   return (
     <DatasetBodyMainContainer isOpenDetailDataset={isOpenDetailDataset}>
       <Doughnut
-        data={chartData.main}
+        data={chartContent.main}
         options={{
           onClick: (ev, el) => {
             if (el[0]) {
@@ -64,14 +64,14 @@ const DatasetBodyMain: React.FC<MainProps> = ({
           },
         }}
       />
-      <AverageDailyTime data={averageData.main} />
+      <AverageDailyTime data={averageContent.main} />
     </DatasetBodyMainContainer>
   );
 };
 
 interface InnerProps {
-  chartData: ChartData;
-  averageData: AverageData;
+  chartData?: ChartData;
+  averageData?: AverageData;
   isOpenDetailDataset: boolean;
   closeDetailDataset: () => void;
 }

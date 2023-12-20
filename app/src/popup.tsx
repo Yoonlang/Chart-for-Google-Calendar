@@ -8,7 +8,10 @@ import {
   LinearScale,
 } from "chart.js";
 import styled from "styled-components";
-import { getAllDatasetContent } from "./getDatasetContent";
+import {
+  getAllDatasetContent,
+  handleDatasetPercent,
+} from "./getDatasetContent";
 import { Loader } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
 import dayjs from "dayjs";
@@ -50,10 +53,15 @@ const Popup = () => {
     datasetContent: DatasetContent,
     idx: number
   ) => {
-    setDatasetContentList((o) =>
-      o.map((c, idx2) => (idx === idx2 ? datasetContent : c))
-    );
+    const tempDatasetContentList = [...datasetContentList];
+    tempDatasetContentList[idx] = datasetContent;
+    handleDatasetPercent(tempDatasetContentList, idx);
+    setDatasetContentList(tempDatasetContentList);
   };
+
+  useEffect(() => {
+    console.log(datasetContentList);
+  }, [datasetContentList]);
 
   if (!datasetContentList) {
     return <Loader size="sm" />;

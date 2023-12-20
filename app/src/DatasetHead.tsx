@@ -1,6 +1,8 @@
 import { DateRangePicker } from "rsuite";
 import styled from "styled-components";
 import { DatasetContent, HeaderData } from "./const";
+import { getDatasetContent } from "./getDatasetContent";
+import dayjs from "dayjs";
 
 const SCDatasetHead = styled.div`
   display: flex;
@@ -10,10 +12,15 @@ const SCDatasetHead = styled.div`
 interface props {
   data: HeaderData;
   handleDatasetContent: (datasetContent: DatasetContent, idx: number) => void;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DatasetHead: React.FC<props> = ({ data, handleDatasetContent }) => {
-  const { datasetIdx, dateRange } = data;
+const DatasetHead: React.FC<props> = ({
+  data,
+  handleDatasetContent,
+  setIsLoading,
+}) => {
+  const { datasetIdx, dateRange, calendarMetadataList } = data;
   const [from, to] = dateRange;
 
   return (
@@ -21,11 +28,15 @@ const DatasetHead: React.FC<props> = ({ data, handleDatasetContent }) => {
       Dataset {datasetIdx + 1}
       <DateRangePicker
         defaultValue={[from.toDate(), to.toDate()]}
-        onChange={(v) => {
+        onChange={async (v) => {
           const [from, to] = v;
-          // from, to에 대해서 getDatasetContent 한다.
-          // 그동안 이 컴포넌트는 Loading을 띄운다.
-          // handleDatasetContent({} as DatasetContent, 1);
+          setIsLoading(true);
+          const res = await getDatasetContent(
+            [dayjs(from), dayjs(to).endOf("d")],
+            calendarMetadataList
+          );
+          handleDatasetContent(res, datasetIdx);
+          setIsLoading(false);
         }}
       />
     </SCDatasetHead>
