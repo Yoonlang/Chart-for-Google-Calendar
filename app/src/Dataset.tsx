@@ -20,12 +20,15 @@ const DatasetBodyContainer = styled.div`
 const Dataset: React.FC<props> = ({ datasetContent, handleDatasetContent }) => {
   const { headerData, chartData, averageData } = datasetContent;
   const [isOpenDetailDataset, setIsOpenDetailDataset] = useState(false);
+  const [innerDatasetIdx, setInnerDatasetIdx] = useState<number | null>();
 
-  const openDetailDataset = () => {
+  const openDetailDataset = (idx: number) => {
+    setInnerDatasetIdx(idx);
     setIsOpenDetailDataset(true);
   };
 
   const closeDetailDataset = () => {
+    setInnerDatasetIdx(null);
     setIsOpenDetailDataset(false);
   };
 
@@ -36,13 +39,15 @@ const Dataset: React.FC<props> = ({ datasetContent, handleDatasetContent }) => {
         handleDatasetContent={handleDatasetContent}
       />
       <DatasetBodyContainer>
-        <DatasetBody.main
+        <DatasetBody.Main
           chartData={chartData}
           averageData={averageData}
           isOpenDetailDataset={isOpenDetailDataset}
           openDetailDataset={openDetailDataset}
         />
-        <DatasetBody.detail
+        <DatasetBody.Inner
+          chartData={chartData.inner[innerDatasetIdx]}
+          averageData={averageData.inner[innerDatasetIdx]}
           isOpenDetailDataset={isOpenDetailDataset}
           closeDetailDataset={closeDetailDataset}
         />

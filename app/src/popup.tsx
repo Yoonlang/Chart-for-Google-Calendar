@@ -8,7 +8,7 @@ import {
   LinearScale,
 } from "chart.js";
 import styled from "styled-components";
-import { getAllDatasetContent } from "./getCalendarData";
+import { getAllDatasetContent } from "./getDatasetContent";
 import { Loader } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
 import dayjs from "dayjs";

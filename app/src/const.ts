@@ -48,7 +48,14 @@ export interface AverageData {
 }
 
 export interface DatasetContent {
+  innerTimeData: Record<string, number>[];
   headerData: HeaderData;
-  chartData: ChartData;
-  averageData: AverageData;
+  chartData: {
+    main: ChartData;
+    inner: ChartData[];
+  };
+  averageData: {
+    main: AverageData;
+    inner: AverageData[];
+  };
 }
