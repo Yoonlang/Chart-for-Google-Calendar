@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { AverageData } from "./const";
+import { isNumber } from "chart.js/helpers";
 
 const formatNumber = (num: number) => {
   return num > 0 ? `+${num}%` : `${num}%`;
@@ -34,6 +35,7 @@ interface props {
 
 const AverageDailyTime: React.FC<props> = ({ data }) => {
   const { backgroundColor, averageDailyTime, percentOfChange } = data;
+
   return (
     <SCAverageDailyTime>
       Average Daily Time
@@ -42,7 +44,7 @@ const AverageDailyTime: React.FC<props> = ({ data }) => {
           <SCAverageDailyTimeDetail color={c}>
             <div className="color"></div>
             <div>{averageDailyTime[idx]}</div>
-            {percentOfChange[idx] && (
+            {percentOfChange[idx] && isNumber(Number(percentOfChange[idx])) && (
               <div
                 className={Number(percentOfChange[idx]) >= 0 ? "plus" : "minus"}
               >

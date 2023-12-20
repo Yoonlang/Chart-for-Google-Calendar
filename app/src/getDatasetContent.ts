@@ -136,7 +136,7 @@ const formatInnerAverageData = (
         }
         const currentTime = (value as number) / range;
         const prevTime =
-          (prevInnerTimeData[key] as number) / prevCalendarData.range;
+          (prevInnerTimeData[idx][key] as number) / prevCalendarData.range;
         return (((currentTime - prevTime) / prevTime) * 100).toFixed(1);
       }),
     };
