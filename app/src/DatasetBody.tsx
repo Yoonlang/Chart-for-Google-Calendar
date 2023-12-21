@@ -1,8 +1,9 @@
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Doughnut } from "react-chartjs-2";
 import AverageDailyTime from "./AverageDailyTime";
 import { AverageData, ChartData } from "./const";
 import styled from "styled-components";
-import { Button, IconButton } from "rsuite";
+import { IconButton } from "rsuite";
 import ArrowLeftLineIcon from "@rsuite/icons/ArrowLeftLine";
 
 const DatasetBodyCommonContainer = styled.div`
@@ -46,24 +47,39 @@ interface MainProps {
   isOpenDetailDataset: boolean;
 }
 
+interface MemorizedDoughnutProps {
+  data: ChartData;
+  options?: any;
+}
+
+const MemorizedDoughnut = React.memo<MemorizedDoughnutProps>(
+  ({ data, options }) => {
+    if (!options) {
+      return <Doughnut data={data} />;
+    }
+    return <Doughnut data={data} options={options} />;
+  }
+);
+
 const DatasetBodyMain: React.FC<MainProps> = ({
   chartContent,
   averageContent,
   openDetailDataset,
   isOpenDetailDataset,
 }) => {
+  const options = useMemo(() => {
+    return {
+      onClick: (ev, el) => {
+        if (el[0]) {
+          openDetailDataset(el[0].index);
+        }
+      },
+    };
+  }, []);
+
   return (
     <DatasetBodyMainContainer isOpenDetailDataset={isOpenDetailDataset}>
-      <Doughnut
-        data={chartContent.main}
-        options={{
-          onClick: (ev, el) => {
-            if (el[0]) {
-              openDetailDataset(el[0].index);
-            }
-          },
-        }}
-      />
+      <MemorizedDoughnut data={chartContent.main} options={options} />
       <AverageDailyTime data={averageContent.main} />
     </DatasetBodyMainContainer>
   );
@@ -89,7 +105,7 @@ const DatasetBodyInner: React.FC<InnerProps> = ({
         onClick={closeDetailDataset}
         appearance="subtle"
       />
-      {chartData && <Doughnut data={chartData} />}
+      {chartData && <MemorizedDoughnut data={chartData} />}
       {averageData && <AverageDailyTime data={averageData} />}
     </DatasetBodyInnerContainer>
   );
