@@ -35,6 +35,7 @@ const DatasetHead: React.FC<props> = ({
             [dayjs(from), dayjs(to).endOf("d")],
             calendarMetadataList
           );
+          res.headerData.datasetIdx = datasetIdx;
           handleDatasetContent(res, datasetIdx);
           setIsLoading(false);
         }}
