@@ -1,5 +1,6 @@
 import dayjs, { Dayjs } from "dayjs";
 import {
+  AverageContent,
   AverageData,
   COLORS_IN_EVENT,
   CalendarContent,
@@ -13,7 +14,7 @@ import {
   MIN_IN_MS,
   URLS,
 } from "./const";
-import { getDateRangeEvents, getHHMM, getMinuites } from "./util";
+import { getDateRangeEvents, getHHMM, getMinByHHMM, getMinuites } from "./util";
 
 const getInnerTimeDataList = (
   calendarDataList: CalendarData[]
@@ -161,13 +162,44 @@ const formatInnerAverageData = (
   });
 };
 
+const recaculatePercent = (p: AverageData, t: AverageData): void => {
+  t.backgroundColor.forEach((c, idx) => {
+    const prevIdx = p.backgroundColor.findIndex((pc) => pc === c);
+    const currentTime = getMinByHHMM(t.averageDailyTime[idx]);
+    const prevTime = getMinByHHMM(p.averageDailyTime[prevIdx]);
+    t.percentOfChange[idx] = (
+      ((currentTime - prevTime) / prevTime) *
+      100
+    ).toFixed(1);
+  });
+};
+
+const recalculatePercentBasedOnPreviousContent = (
+  prev: AverageContent,
+  target: AverageContent
+): void => {
+  recaculatePercent(prev.main, target.main);
+  target.inner.forEach((t, idx) => {
+    recaculatePercent(prev.inner[idx], t);
+  });
+};
+
 export const handleDatasetPercent = (
   datasetContentList: DatasetContent[],
   datasetIdx: number
 ) => {
-  // datasetidx가 바뀐 주체.
-  // 바꾼 것의 퍼센트 바꾸기 (앞에꺼 보고)
-  // 바꾼 것의 뒤에거 퍼센트 바꾸기 (나 보고)
+  if (datasetIdx !== 0) {
+    recalculatePercentBasedOnPreviousContent(
+      datasetContentList[datasetIdx - 1].averageContent,
+      datasetContentList[datasetIdx].averageContent
+    );
+  }
+  if (datasetIdx !== datasetContentList.length - 1) {
+    recalculatePercentBasedOnPreviousContent(
+      datasetContentList[datasetIdx].averageContent,
+      datasetContentList[datasetIdx + 1].averageContent
+    );
+  }
 };
 
 const getCalendarContentList = (

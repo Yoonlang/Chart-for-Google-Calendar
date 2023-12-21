@@ -72,16 +72,20 @@ export interface CalendarContent {
   calendarDataList: CalendarData[];
 }
 
+export interface ChartContent {
+  main: ChartData;
+  inner: ChartData[];
+}
+
+export interface AverageContent {
+  main: AverageData;
+  inner: AverageData[];
+}
+
 export interface DatasetContent {
   calendarContentList: CalendarContent[];
   innerTimeDataList: Record<string, number>[];
   headerData: HeaderData;
-  chartContent: {
-    main: ChartData;
-    inner: ChartData[];
-  };
-  averageContent: {
-    main: AverageData;
-    inner: AverageData[];
-  };
+  chartContent: ChartContent;
+  averageContent: AverageContent;
 }

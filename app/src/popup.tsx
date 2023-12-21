@@ -59,10 +59,6 @@ const Popup = () => {
     setDatasetContentList(tempDatasetContentList);
   };
 
-  useEffect(() => {
-    console.log(datasetContentList);
-  }, [datasetContentList]);
-
   if (!datasetContentList) {
     return <Loader size="sm" />;
   }

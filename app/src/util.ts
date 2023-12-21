@@ -1,5 +1,13 @@
 import { URLS } from "./const";
 
+export const getMinByHHMM = (hhmm: string): number => {
+  if (!hhmm) {
+    return NaN;
+  }
+  const [hour, min] = hhmm.split(":");
+  return Number(hour) * 60 + Number(min);
+};
+
 export const getHHMM = (ms) => {
   const seconds = Math.floor(ms / 1000);
   const hours = Math.floor(seconds / 3600);
