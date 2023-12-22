@@ -6,7 +6,9 @@ import dayjs from "dayjs";
 
 const SCDatasetHead = styled.div`
   display: flex;
-  gap: 10px;
+  justify-content: space-around;
+  align-items: center;
+  height: 45px;
 `;
 
 interface props {
@@ -25,7 +27,7 @@ const DatasetHead: React.FC<props> = ({
 
   return (
     <SCDatasetHead>
-      Dataset {datasetIdx + 1}
+      <h5>Dataset {datasetIdx + 1}</h5>
       <DateRangePicker
         defaultValue={[from.toDate(), to.toDate()]}
         onChange={async (v) => {

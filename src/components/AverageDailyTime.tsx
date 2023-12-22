@@ -10,10 +10,17 @@ const SCAverageDailyTime = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
+
+  p {
+    font-weight: bold;
+  }
+  margin-bottom: 10px;
 `;
 
 const SCAverageDailyTimeDetail = styled.div`
   display: flex;
+  height: 20px;
+  align-items: center;
   width: 100%;
   gap: 20px;
   .color {
@@ -38,7 +45,7 @@ const AverageDailyTime: React.FC<props> = ({ data }) => {
 
   return (
     <SCAverageDailyTime>
-      Average Daily Time
+      <p>Average Daily Time</p>
       {backgroundColor?.map((c, idx) => {
         return (
           <SCAverageDailyTimeDetail color={c}>

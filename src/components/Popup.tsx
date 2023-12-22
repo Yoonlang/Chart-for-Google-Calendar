@@ -14,7 +14,19 @@ const SCPopup = styled.div`
   width: 100%;
   height: 100%;
   align-items: center;
+  justify-content: space-around;
+`;
+
+const SCLoaderContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  gap: 40px;
+
+  h1 {
+    color: #497df2;
+  }
 `;
 
 dayjs.Ls.en.weekStart = 1;
@@ -47,21 +59,24 @@ const Popup = () => {
     setDatasetContentList(tempDatasetContentList);
   };
 
-  if (!datasetContentList) {
-    return <Loader size="sm" />;
-  }
-
   return (
     <SCPopup>
-      {datasetContentList.map((c, idx) => {
-        return (
-          <Dataset
-            key={idx}
-            datasetContent={c}
-            handleDatasetContent={handleDatasetContent}
-          />
-        );
-      })}
+      {datasetContentList ? (
+        datasetContentList.map((c, idx) => {
+          return (
+            <Dataset
+              key={idx}
+              datasetContent={c}
+              handleDatasetContent={handleDatasetContent}
+            />
+          );
+        })
+      ) : (
+        <SCLoaderContainer>
+          <h1>Chart for Google Calendar!</h1>
+          <Loader size="lg" />
+        </SCLoaderContainer>
+      )}
     </SCPopup>
   );
 };

@@ -89,7 +89,6 @@ const formatInnerChartData = (
   return innerTimeData.map((d, idx) => {
     return {
       labels: Object.keys(d).map((key) => {
-        console.log(key, typeof key);
         return key === "main" ? key : COLORS_IN_EVENT[Number(key)];
       }),
       datasets: [

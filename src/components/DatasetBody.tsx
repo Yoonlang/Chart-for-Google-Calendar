@@ -8,25 +8,28 @@ import { IconButton } from "rsuite";
 import ArrowLeftLineIcon from "@rsuite/icons/ArrowLeftLine";
 
 const DatasetBodyCommonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: absolute;
+  top: 50px;
   width: 100%;
+  transition: 0.5s;
+  transition-property: left;
 `;
 
 const DatasetBodyMainContainer = styled(DatasetBodyCommonContainer)<{
   isOpenDetailDataset: boolean;
 }>`
-  position: absolute;
   ${({ isOpenDetailDataset }) =>
-    isOpenDetailDataset ? `left: -100%;` : `left: 0;`}
-  transition: 0.5s;
+    isOpenDetailDataset ? `left: 350px; visibility: hidden;` : `left: 0;`}
 `;
 
 const DatasetBodyInnerContainer = styled(DatasetBodyCommonContainer)<{
   isOpenDetailDataset: boolean;
 }>`
-  position: absolute;
   ${({ isOpenDetailDataset }) =>
-    isOpenDetailDataset ? `left: 0;` : `left: 100%;`}
-  transition: 0.5s;
+    isOpenDetailDataset ? `left: 0;` : `left: 350px; visibility: hidden;`}
 
   > button {
     position: absolute;
@@ -56,9 +59,24 @@ interface MemorizedDoughnutProps {
 const MemorizedDoughnut = React.memo<MemorizedDoughnutProps>(
   ({ data, options }) => {
     if (!options) {
-      return <Doughnut data={data} />;
+      return (
+        <Doughnut
+          data={data}
+          style={{
+            maxHeight: "280px",
+          }}
+        />
+      );
     }
-    return <Doughnut data={data} options={options} />;
+    return (
+      <Doughnut
+        data={data}
+        options={options}
+        style={{
+          maxHeight: "280px",
+        }}
+      />
+    );
   }
 );
 
@@ -102,9 +120,11 @@ const DatasetBodyInner: React.FC<InnerProps> = ({
   return (
     <DatasetBodyInnerContainer isOpenDetailDataset={isOpenDetailDataset}>
       <IconButton
-        icon={<ArrowLeftLineIcon style={{ fontSize: "3em" }} />}
+        icon={<ArrowLeftLineIcon style={{ fontSize: "2em" }} />}
         onClick={closeDetailDataset}
-        appearance="subtle"
+        appearance="link"
+        aria-hidden={!isOpenDetailDataset}
+        disabled={!isOpenDetailDataset}
       />
       {chartData && <MemorizedDoughnut data={chartData} />}
       {averageData && <AverageDailyTime data={averageData} />}

@@ -10,14 +10,26 @@ interface props {
   handleDatasetContent: (datasetContent: DatasetContent, idx: number) => void;
 }
 
-const DatasetBodyContainer = styled.div`
-  display: flex;
+const SCDataset = styled.div`
   position: relative;
-  min-width: 300px;
-  min-height: 420px;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  width: 320px;
+  height: 100%;
+  margin: 0 15px;
+`;
+
+const SCDatasetBodyContainer = styled.div`
+  width: 100%;
+
+  .center {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 const Dataset: React.FC<props> = ({ datasetContent, handleDatasetContent }) => {
@@ -32,20 +44,21 @@ const Dataset: React.FC<props> = ({ datasetContent, handleDatasetContent }) => {
   };
 
   const closeDetailDataset = () => {
-    setInnerDatasetIdx(null);
     setIsOpenDetailDataset(false);
   };
 
   return (
-    <div>
+    <SCDataset>
       <DatasetHead
         data={headerData}
         handleDatasetContent={handleDatasetContent}
         setIsLoading={setIsLoading}
       />
-      <DatasetBodyContainer>
+      <SCDatasetBodyContainer>
         {isLoading ? (
-          <Loader size="lg" />
+          <div className="center">
+            <Loader size="lg" />
+          </div>
         ) : (
           <>
             <DatasetBody.Main
@@ -66,8 +79,8 @@ const Dataset: React.FC<props> = ({ datasetContent, handleDatasetContent }) => {
             />
           </>
         )}
-      </DatasetBodyContainer>
-    </div>
+      </SCDatasetBodyContainer>
+    </SCDataset>
   );
 };
 
