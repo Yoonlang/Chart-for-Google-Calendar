@@ -25,9 +25,8 @@ const defaultDateRanges: DateRange = [
 ];
 
 const Popup = () => {
-  const [datasetContentList, setDatasetContentList] = useState<
-    DatasetContent[] | null
-  >(null);
+  const [datasetContentList, setDatasetContentList] =
+    useState<DatasetContent[]>();
 
   useEffect(() => {
     const handleAllDatasetContent = async () => {
@@ -41,7 +40,7 @@ const Popup = () => {
     datasetContent: DatasetContent,
     idx: number
   ) => {
-    const tempDatasetContentList = [...datasetContentList];
+    const tempDatasetContentList = [...(datasetContentList ?? [])];
     tempDatasetContentList[idx] = datasetContent;
     handleDatasetPercent(tempDatasetContentList, idx);
     setDatasetContentList(tempDatasetContentList);

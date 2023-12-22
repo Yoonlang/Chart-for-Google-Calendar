@@ -8,7 +8,7 @@ export const getMinByHHMM = (hhmm: string): number => {
   return Number(hour) * 60 + Number(min);
 };
 
-export const getHHMM = (ms) => {
+export const getHHMM = (ms: number) => {
   const seconds = Math.floor(ms / 1000);
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -19,17 +19,17 @@ export const getHHMM = (ms) => {
   return formattedTime;
 };
 
-export const getMinuites = (ms) => {
+export const getMinuites = (ms: number) => {
   const seconds = Math.floor(ms / 1000);
   const minutes = Math.floor(seconds / 60);
   return minutes;
 };
 
 export const getDateRangeEvents = async (
-  calendarIdList,
-  headers,
-  prev,
-  next
+  calendarIdList: string[],
+  headers: Headers,
+  prev: string,
+  next: string
 ) => {
   const res = await Promise.all(
     calendarIdList.map((cid) =>
@@ -46,9 +46,9 @@ export const getDateRangeEvents = async (
 
 type PromiseStatus = "pending" | "success" | "error";
 
-export const wrapPromise = (promise) => {
+export const wrapPromise = (promise: Promise<any>) => {
   let status: PromiseStatus = "pending";
-  let response;
+  let response: any;
   let suspender = promise.then(
     (r) => {
       status = "success";

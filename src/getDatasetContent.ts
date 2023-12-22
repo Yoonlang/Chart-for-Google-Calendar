@@ -19,7 +19,7 @@ const getInnerTimeDataList = (
 ): Record<string, number>[] => {
   const res: Record<string, number>[] = [];
   calendarDataList.forEach((c) => {
-    const obj = {};
+    const obj: Record<string, number> = {};
     const { events } = c;
     events.forEach((e) => {
       if (!e.colorId) {
@@ -89,7 +89,8 @@ const formatInnerChartData = (
   return innerTimeData.map((d, idx) => {
     return {
       labels: Object.keys(d).map((key) => {
-        return key === "main" ? key : COLORS_IN_EVENT[key];
+        console.log(key, typeof key);
+        return key === "main" ? key : COLORS_IN_EVENT[Number(key)];
       }),
       datasets: [
         {
@@ -98,7 +99,7 @@ const formatInnerChartData = (
           backgroundColor: Object.keys(d).map((key) => {
             return key === "main"
               ? calendarDataList[idx].backgroundColor
-              : COLORS_IN_EVENT[key];
+              : COLORS_IN_EVENT[Number(key)];
           }),
         },
       ],
@@ -118,7 +119,7 @@ const formatAverageData = (
     ),
     percentOfChange: calendarDataList.map((l, idx2) => {
       if (!prevCalendarContent) {
-        return null;
+        return "";
       }
       const { calendarDataList: cl, range: r } = prevCalendarContent;
       const currentTime = l.eventsTotalTime / range;
@@ -140,7 +141,7 @@ const formatInnerAverageData = (
       backgroundColor: Object.keys(d).map((key) =>
         key === "main"
           ? calendarDataList[idx].backgroundColor
-          : COLORS_IN_EVENT[key]
+          : COLORS_IN_EVENT[Number(key)]
       ),
       averageDailyTime: Object.values(d).map((value) =>
         getHHMM(Math.floor(Number(value) / range) * MIN_IN_MS)
@@ -148,7 +149,7 @@ const formatInnerAverageData = (
       percentOfChange: Object.entries(d).map((entry) => {
         const [key, value] = entry;
         if (!prevInnerTimeDataList || !prevCalendarContent) {
-          return null;
+          return "";
         }
         const currentTime = (value as number) / range;
         const prevTime =
@@ -205,7 +206,7 @@ const getCalendarContentList = (
   dateRanges: DateRange,
   calendarMetadataList: CalendarMetadata[]
 ): CalendarContent[] => {
-  return eventDataList.map((s, idx) => {
+  return eventDataList.map((s: any, idx: number) => {
     const [from, to] = dateRanges[idx];
     return {
       range: to.diff(from, "d") + 1,
@@ -213,8 +214,8 @@ const getCalendarContentList = (
       calendarDataList: calendarMetadataList.map((c, idx2) => {
         const { id, backgroundColor, summary } = c;
         const events: Event[] = s[idx2].items
-          ?.filter((e) => e.start?.dateTime)
-          ?.map((e) => {
+          ?.filter((e: any) => e.start?.dateTime)
+          ?.map((e: any) => {
             const { start, end, colorId, id } = e;
             return { start, end, colorId, id };
           });
@@ -273,7 +274,7 @@ export const getAllDatasetContent = (
 ): Promise<DatasetContent[]> => {
   // indexedDB 데이터 먼저 확인
   return new Promise<DatasetContent[]>((resolve) => {
-    const res = [];
+    const res: DatasetContent[] = [];
     chrome.identity.getAuthToken({ interactive: true }, async (token) => {
       const headers = new Headers({
         Authorization: `Bearer ${token}`,
@@ -285,7 +286,7 @@ export const getAllDatasetContent = (
       });
       const calendarListData = await calendarListResponse.json();
       const calendarMetadataList: CalendarMetadata[] =
-        calendarListData.items.map((i) => {
+        calendarListData.items.map((i: any) => {
           const { id, backgroundColor, summary } = i;
           return {
             id,

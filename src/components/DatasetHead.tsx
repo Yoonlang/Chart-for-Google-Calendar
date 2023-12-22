@@ -29,7 +29,7 @@ const DatasetHead: React.FC<props> = ({
       <DateRangePicker
         defaultValue={[from.toDate(), to.toDate()]}
         onChange={async (v) => {
-          const [from, to] = v;
+          const [from, to] = v!;
           setIsLoading(true);
           const res = await getDatasetContent(
             [dayjs(from), dayjs(to).endOf("d")],

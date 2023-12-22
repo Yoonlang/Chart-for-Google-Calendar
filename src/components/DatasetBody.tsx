@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { Doughnut } from "react-chartjs-2";
+import { ChartEvent, ActiveElement } from "chart.js";
 import AverageDailyTime from "./AverageDailyTime";
 import { AverageData, ChartData } from "../types";
 import styled from "styled-components";
@@ -69,7 +70,7 @@ const DatasetBodyMain: React.FC<MainProps> = ({
 }) => {
   const options = useMemo(() => {
     return {
-      onClick: (ev, el) => {
+      onClick: (ev: ChartEvent, el: ActiveElement[]) => {
         if (el[0]) {
           openDetailDataset(el[0].index);
         }
@@ -86,8 +87,8 @@ const DatasetBodyMain: React.FC<MainProps> = ({
 };
 
 interface InnerProps {
-  chartData?: ChartData;
-  averageData?: AverageData;
+  chartData: ChartData | null;
+  averageData: AverageData | null;
   isOpenDetailDataset: boolean;
   closeDetailDataset: () => void;
 }

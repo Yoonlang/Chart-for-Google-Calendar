@@ -55,8 +55,12 @@ const Dataset: React.FC<props> = ({ datasetContent, handleDatasetContent }) => {
               openDetailDataset={openDetailDataset}
             />
             <DatasetBody.Inner
-              chartData={chartContent.inner[innerDatasetIdx]}
-              averageData={averageContent.inner[innerDatasetIdx]}
+              chartData={
+                innerDatasetIdx ? chartContent.inner[innerDatasetIdx] : null
+              }
+              averageData={
+                innerDatasetIdx ? averageContent.inner[innerDatasetIdx] : null
+              }
               isOpenDetailDataset={isOpenDetailDataset}
               closeDetailDataset={closeDetailDataset}
             />
