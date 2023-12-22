@@ -29,6 +29,30 @@ const SCLoaderContainer = styled.div`
   }
 `;
 
+const Blur = styled.div`
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 6;
+
+  h4 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    top: calc(50% - 183px - 30px - 15px + 20px);
+    width: 120px;
+    height: 30px;
+    color: #fff;
+  }
+`;
+
 dayjs.Ls.en.weekStart = 1;
 const now = dayjs();
 
@@ -40,6 +64,8 @@ const defaultDateRanges: DateRange = [
 const Popup = () => {
   const [datasetContentList, setDatasetContentList] =
     useState<DatasetContent[]>();
+  const [openedDateRangePickerIdx, setOpenedDateRangePickerIdx] =
+    useState<number>();
 
   useEffect(() => {
     const handleAllDatasetContent = async () => {
@@ -68,6 +94,7 @@ const Popup = () => {
               key={idx}
               datasetContent={c}
               handleDatasetContent={handleDatasetContent}
+              setOpenedDateRangePickerIdx={setOpenedDateRangePickerIdx}
             />
           );
         })
@@ -76,6 +103,11 @@ const Popup = () => {
           <h1>Chart for Google Calendar!</h1>
           <Loader size="lg" />
         </SCLoaderContainer>
+      )}
+      {openedDateRangePickerIdx !== undefined && (
+        <Blur>
+          <h4>Dataset {openedDateRangePickerIdx + 1}</h4>
+        </Blur>
       )}
     </SCPopup>
   );

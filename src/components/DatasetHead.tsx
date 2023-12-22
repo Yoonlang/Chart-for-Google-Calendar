@@ -15,12 +15,16 @@ interface props {
   data: HeaderData;
   handleDatasetContent: (datasetContent: DatasetContent, idx: number) => void;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenedDateRangePickerIdx: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
 }
 
 const DatasetHead: React.FC<props> = ({
   data,
   handleDatasetContent,
   setIsLoading,
+  setOpenedDateRangePickerIdx,
 }) => {
   const { datasetIdx, dateRange, calendarMetadataList } = data;
   const [from, to] = dateRange;
@@ -41,6 +45,8 @@ const DatasetHead: React.FC<props> = ({
           handleDatasetContent(res, datasetIdx);
           setIsLoading(false);
         }}
+        onEnter={() => setOpenedDateRangePickerIdx(datasetIdx)}
+        onExit={() => setOpenedDateRangePickerIdx(undefined)}
       />
     </SCDatasetHead>
   );

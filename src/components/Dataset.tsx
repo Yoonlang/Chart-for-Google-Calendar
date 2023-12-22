@@ -8,6 +8,9 @@ import { Loader } from "rsuite";
 interface props {
   datasetContent: DatasetContent;
   handleDatasetContent: (datasetContent: DatasetContent, idx: number) => void;
+  setOpenedDateRangePickerIdx: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
 }
 
 const SCDataset = styled.div`
@@ -32,7 +35,11 @@ const SCDatasetBodyContainer = styled.div`
   }
 `;
 
-const Dataset: React.FC<props> = ({ datasetContent, handleDatasetContent }) => {
+const Dataset: React.FC<props> = ({
+  datasetContent,
+  handleDatasetContent,
+  setOpenedDateRangePickerIdx,
+}) => {
   const { headerData, chartContent, averageContent } = datasetContent;
   const [isOpenDetailDataset, setIsOpenDetailDataset] = useState(false);
   const [innerDatasetIdx, setInnerDatasetIdx] = useState<number | null>();
@@ -53,6 +60,7 @@ const Dataset: React.FC<props> = ({ datasetContent, handleDatasetContent }) => {
         data={headerData}
         handleDatasetContent={handleDatasetContent}
         setIsLoading={setIsLoading}
+        setOpenedDateRangePickerIdx={setOpenedDateRangePickerIdx}
       />
       <SCDatasetBodyContainer>
         {isLoading ? (
