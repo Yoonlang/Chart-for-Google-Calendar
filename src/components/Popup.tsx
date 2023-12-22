@@ -8,6 +8,7 @@ import { Loader } from "rsuite";
 import dayjs from "dayjs";
 import { DatasetContent, DateRange } from "../types";
 import Dataset from "./Dataset";
+import { isNumber } from "chart.js/helpers";
 
 const SCPopup = styled.div`
   display: flex;
@@ -104,7 +105,7 @@ const Popup = () => {
           <Loader size="lg" />
         </SCLoaderContainer>
       )}
-      {openedDateRangePickerIdx !== undefined && (
+      {isNumber(openedDateRangePickerIdx) && (
         <Blur>
           <h4>Dataset {openedDateRangePickerIdx + 1}</h4>
         </Blur>

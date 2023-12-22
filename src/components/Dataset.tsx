@@ -4,6 +4,7 @@ import { useState } from "react";
 import DatasetBody from "./DatasetBody";
 import styled from "styled-components";
 import { Loader } from "rsuite";
+import { isNumber } from "chart.js/helpers";
 
 interface props {
   datasetContent: DatasetContent;
@@ -77,10 +78,14 @@ const Dataset: React.FC<props> = ({
             />
             <DatasetBody.Inner
               chartData={
-                innerDatasetIdx ? chartContent.inner[innerDatasetIdx] : null
+                isNumber(innerDatasetIdx)
+                  ? chartContent.inner[innerDatasetIdx]
+                  : null
               }
               averageData={
-                innerDatasetIdx ? averageContent.inner[innerDatasetIdx] : null
+                isNumber(innerDatasetIdx)
+                  ? averageContent.inner[innerDatasetIdx]
+                  : null
               }
               isOpenDetailDataset={isOpenDetailDataset}
               closeDetailDataset={closeDetailDataset}
