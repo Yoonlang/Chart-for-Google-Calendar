@@ -1,6 +1,6 @@
 import { DateRangePicker } from "rsuite";
 import styled from "styled-components";
-import { DatasetContent, HeaderData } from "../const";
+import { DatasetContent, HeaderData } from "../types";
 import { getDatasetContent } from "../getDatasetContent";
 import dayjs from "dayjs";
 

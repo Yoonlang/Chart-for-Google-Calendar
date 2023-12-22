@@ -1,8 +1,8 @@
 import dayjs, { Dayjs } from "dayjs";
+import { COLORS_IN_EVENT, MIN_IN_MS, URLS } from "./consts";
 import {
   AverageContent,
   AverageData,
-  COLORS_IN_EVENT,
   CalendarContent,
   CalendarData,
   CalendarMetadata,
@@ -11,9 +11,7 @@ import {
   DateRange,
   Event,
   HeaderData,
-  MIN_IN_MS,
-  URLS,
-} from "./const";
+} from "./types";
 import { getDateRangeEvents, getHHMM, getMinByHHMM, getMinuites } from "./util";
 
 const getInnerTimeDataList = (

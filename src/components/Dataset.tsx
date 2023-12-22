@@ -1,4 +1,4 @@
-import { DatasetContent } from "../const";
+import { DatasetContent } from "../types";
 import DatasetHead from "./DatasetHead";
 import { useState } from "react";
 import DatasetBody from "./DatasetBody";

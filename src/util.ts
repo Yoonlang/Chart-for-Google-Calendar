@@ -1,4 +1,4 @@
-import { URLS } from "./const";
+import { URLS } from "./consts";
 
 export const getMinByHHMM = (hhmm: string): number => {
   if (!hhmm) {

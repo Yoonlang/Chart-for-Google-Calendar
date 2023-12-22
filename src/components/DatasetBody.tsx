@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Doughnut } from "react-chartjs-2";
 import AverageDailyTime from "./AverageDailyTime";
-import { AverageData, ChartData } from "../const";
+import { AverageData, ChartData } from "../types";
 import styled from "styled-components";
 import { IconButton } from "rsuite";
 import ArrowLeftLineIcon from "@rsuite/icons/ArrowLeftLine";

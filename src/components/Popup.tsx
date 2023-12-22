@@ -6,7 +6,7 @@ import {
 } from "../getDatasetContent";
 import { Loader } from "rsuite";
 import dayjs from "dayjs";
-import { DatasetContent, DateRange } from "../const";
+import { DatasetContent, DateRange } from "../types";
 import Dataset from "./Dataset";
 
 const SCPopup = styled.div`
