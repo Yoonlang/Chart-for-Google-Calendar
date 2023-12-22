@@ -1,4 +1,4 @@
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { COLORS_IN_EVENT, MIN_IN_MS, URLS } from "./consts";
 import {
   AverageContent,
@@ -202,7 +202,7 @@ export const handleDatasetPercent = (
 
 const getCalendarContentList = (
   eventDataList: any,
-  dateRanges: DateRange,
+  dateRanges: DateRange[],
   calendarMetadataList: CalendarMetadata[]
 ): CalendarContent[] => {
   return eventDataList.map((s: any, idx: number) => {
@@ -269,7 +269,7 @@ const handleDatasetContent = (
 };
 
 export const getAllDatasetContent = (
-  dateRanges: DateRange
+  dateRanges: DateRange[]
 ): Promise<DatasetContent[]> => {
   // indexedDB 데이터 먼저 확인
   return new Promise<DatasetContent[]>((resolve) => {
@@ -318,7 +318,7 @@ export const getAllDatasetContent = (
 };
 
 export const getDatasetContent = (
-  dateRange: [Dayjs, Dayjs],
+  dateRange: DateRange,
   calendarMetadataList: CalendarMetadata[]
 ) => {
   return new Promise<DatasetContent>((resolve) => {

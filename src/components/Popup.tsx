@@ -57,7 +57,7 @@ const Blur = styled.div`
 dayjs.Ls.en.weekStart = 1;
 const now = dayjs();
 
-const defaultDateRanges: DateRange = [
+const defaultDateRanges: DateRange[] = [
   [now.startOf("w").subtract(1, "w"), now.startOf("w").subtract(1, "ms")],
   [now.startOf("w"), now.startOf("d").subtract(1, "ms")],
 ];

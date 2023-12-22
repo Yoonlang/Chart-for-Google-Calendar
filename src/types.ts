@@ -1,11 +1,11 @@
 import { Dayjs } from "dayjs";
 
-export type DateRange = [Dayjs, Dayjs][];
+export type DateRange = [Dayjs, Dayjs];
 
 export interface HeaderData {
   datasetIdx: number;
   calendarMetadataList: CalendarMetadata[];
-  dateRange: [Dayjs, Dayjs];
+  dateRange: DateRange;
 }
 
 interface ChartDataset {
@@ -45,7 +45,7 @@ export interface CalendarData extends CalendarMetadata {
 
 export interface CalendarContent {
   range: number;
-  dateRange: [Dayjs, Dayjs];
+  dateRange: DateRange;
   calendarDataList: CalendarData[];
 }
 
