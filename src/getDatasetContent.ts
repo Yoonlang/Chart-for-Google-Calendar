@@ -200,6 +200,28 @@ export const handleDatasetPercent = (
   }
 };
 
+const getOverlapDateRange = (
+  eventRange: DateRange,
+  dateRange: DateRange
+): {
+  isOverlapped: boolean;
+  overlappedDateRange: DateRange | null;
+} => {
+  const [start1, end1] = eventRange;
+  const [start2, end2] = dateRange;
+
+  const isOverlapped = !start1.isAfter(end2) && !end1.isBefore(start2);
+  return {
+    isOverlapped,
+    overlappedDateRange: isOverlapped
+      ? [
+          start1.isAfter(start2) ? start1 : start2,
+          end1.isBefore(end2) ? end1 : end2,
+        ]
+      : null,
+  };
+};
+
 const getCalendarContentList = (
   eventDataList: any,
   dateRanges: DateRange[],
@@ -214,8 +236,21 @@ const getCalendarContentList = (
         const { id, backgroundColor, summary } = c;
         const events: Event[] = s[idx2].items
           ?.filter((e: any) => e.start?.dateTime)
+          ?.filter(
+            (e: any) =>
+              getOverlapDateRange(
+                [dayjs(e.start.dateTime), dayjs(e.end.dateTime)],
+                dateRanges[idx]
+              ).isOverlapped
+          )
           ?.map((e: any) => {
             const { start, end, colorId, id } = e;
+            const [overlapStart, overlapEnd] = getOverlapDateRange(
+              [dayjs(start.dateTime), dayjs(end.dateTime)],
+              dateRanges[idx]
+            ).overlappedDateRange as DateRange;
+            start.dateTime = overlapStart.toDate();
+            end.dateTime = overlapEnd.toDate();
             return { start, end, colorId, id };
           });
 
