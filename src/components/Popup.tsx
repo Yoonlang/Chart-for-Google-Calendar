@@ -17,6 +17,7 @@ const SCPopup = styled.div`
   justify-content: center;
 `;
 
+dayjs.Ls.en.weekStart = 1;
 const now = dayjs();
 
 const defaultDateRanges: DateRange = [
