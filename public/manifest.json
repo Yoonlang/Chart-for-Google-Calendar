@@ -18,7 +18,7 @@
   "host_permissions": ["<all_urls>"],
 
   "oauth2": {
-    "client_id": "879174495444-jrpfddad22rap7t5n0fksrhqvpakqnbc.apps.googleusercontent.com",
+    "client_id": "883357390105-0edmd23muopd98cjv1cco8aagkdjg3lj.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/calendar.calendarlist.readonly",
       "https://www.googleapis.com/auth/calendar.calendars.readonly",
