@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { AverageData } from "./const";
+import { AverageData } from "../const";
 import { isNumber } from "chart.js/helpers";
 
 const formatNumber = (num: number) => {

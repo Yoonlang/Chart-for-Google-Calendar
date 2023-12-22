@@ -1,7 +1,7 @@
 import { DateRangePicker } from "rsuite";
 import styled from "styled-components";
-import { DatasetContent, HeaderData } from "./const";
-import { getDatasetContent } from "./getDatasetContent";
+import { DatasetContent, HeaderData } from "../const";
+import { getDatasetContent } from "../getDatasetContent";
 import dayjs from "dayjs";
 
 const SCDatasetHead = styled.div`

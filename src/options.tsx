@@ -1,18 +1,15 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
+import Options from "./components/Options";
 
-const Options = () => {
-  return (
-    <>
-      <div>options</div>
-    </>
-  );
+const OptionsContainer = () => {
+  return <Options />;
 };
 
 const root = createRoot(document.getElementById("root")!);
 
 root.render(
   <React.StrictMode>
-    <Options />
+    <OptionsContainer />
   </React.StrictMode>
 );
