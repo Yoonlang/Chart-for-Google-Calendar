@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Doughnut } from "react-chartjs-2";
 import AverageDailyTime from "./AverageDailyTime";
 import { AverageData, ChartData } from "./const";
