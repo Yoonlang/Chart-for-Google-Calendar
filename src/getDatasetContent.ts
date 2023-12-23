@@ -209,7 +209,6 @@ const getOverlapDateRange = (
 } => {
   const [start1, end1] = eventRange;
   const [start2, end2] = dateRange;
-
   const isOverlapped = !start1.isAfter(end2) && !end1.isBefore(start2);
   return {
     isOverlapped,

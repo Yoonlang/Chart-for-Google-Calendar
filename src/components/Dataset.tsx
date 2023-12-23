@@ -1,6 +1,6 @@
 import { DatasetContent } from "../types";
 import DatasetHead from "./DatasetHead";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import DatasetBody from "./DatasetBody";
 import styled from "styled-components";
 import { Loader } from "rsuite";
@@ -41,10 +41,18 @@ const Dataset: React.FC<props> = ({
   handleDatasetContent,
   setOpenedDateRangePickerIdx,
 }) => {
-  const { headerData, chartContent, averageContent } = datasetContent;
+  const { headerData, chartContent, averageContent, innerTimeDataList } =
+    datasetContent;
   const [isOpenDetailDataset, setIsOpenDetailDataset] = useState(false);
   const [innerDatasetIdx, setInnerDatasetIdx] = useState<number | null>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const hasTimeInDataset: boolean = useMemo(() => {
+    let time: number = 0;
+    innerTimeDataList.forEach((d) => {
+      time += Object.values(d).reduce((acc, cur) => acc + cur, 0);
+    });
+    return time > 0;
+  }, [innerTimeDataList]);
 
   const openDetailDataset = (idx: number) => {
     setInnerDatasetIdx(idx);
@@ -68,7 +76,7 @@ const Dataset: React.FC<props> = ({
           <div className="center">
             <Loader size="lg" />
           </div>
-        ) : (
+        ) : hasTimeInDataset ? (
           <>
             <DatasetBody.Main
               chartContent={chartContent}
@@ -91,6 +99,8 @@ const Dataset: React.FC<props> = ({
               closeDetailDataset={closeDetailDataset}
             />
           </>
+        ) : (
+          <>hi</>
         )}
       </SCDatasetBodyContainer>
     </SCDataset>
