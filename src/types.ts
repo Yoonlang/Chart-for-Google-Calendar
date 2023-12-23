@@ -60,7 +60,6 @@ export interface AverageContent {
 }
 
 export interface DatasetContent {
-  calendarContentList: CalendarContent[];
   innerTimeDataList: Record<string, number>[];
   headerData: HeaderData;
   chartContent: ChartContent;

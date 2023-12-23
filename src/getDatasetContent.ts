@@ -280,7 +280,6 @@ const handleDatasetContent = (
   calendarContentList.forEach((d, idx) => {
     const innerTimeDataList = getInnerTimeDataList(d.calendarDataList);
     res[idx] = {
-      calendarContentList: [],
       innerTimeDataList,
       headerData: formatHeaderData(d, idx, calendarMetadataList),
       chartContent: {
