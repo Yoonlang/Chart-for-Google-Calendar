@@ -5,6 +5,7 @@ import DatasetBody from "./DatasetBody";
 import styled from "styled-components";
 import { Loader } from "rsuite";
 import { isNumber } from "chart.js/helpers";
+import EventDetailIcon from "@rsuite/icons/EventDetail";
 
 interface props {
   datasetContent: DatasetContent;
@@ -26,13 +27,21 @@ const SCDataset = styled.div`
 
 const SCDatasetBodyContainer = styled.div`
   width: 100%;
+  height: calc(100% - 45px);
 
   .center {
     width: 100%;
     height: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 20px;
+
+    h4 {
+      font-size: 36px;
+      color: #ff7f50;
+    }
   }
 `;
 
@@ -100,7 +109,10 @@ const Dataset: React.FC<props> = ({
             />
           </>
         ) : (
-          <>hi</>
+          <div className="center">
+            <h4>No Events!</h4>
+            <EventDetailIcon style={{ fontSize: "8em", color: "#ff7f50" }} />
+          </div>
         )}
       </SCDatasetBodyContainer>
     </SCDataset>
