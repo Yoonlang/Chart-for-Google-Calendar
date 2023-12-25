@@ -59,7 +59,12 @@ const now = dayjs();
 
 const defaultDateRanges: DateRange[] = [
   [now.startOf("w").subtract(1, "w"), now.startOf("w").subtract(1, "ms")],
-  [now.startOf("w"), now.startOf("d").subtract(1, "ms")],
+  [
+    now.startOf("w"),
+    now.startOf("d").subtract(1, "ms").isBefore(now.startOf("w"))
+      ? now.endOf("d")
+      : now.startOf("d").subtract(1, "ms"),
+  ],
 ];
 
 const Popup = () => {

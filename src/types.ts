@@ -23,6 +23,7 @@ export interface AverageData {
   backgroundColor: string[];
   averageDailyTime: string[];
   percentOfChange: string[];
+  summaryList: string[];
 }
 
 export interface CalendarMetadata {

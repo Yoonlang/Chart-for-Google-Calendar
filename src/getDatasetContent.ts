@@ -125,6 +125,7 @@ const formatAverageData = (
       const prevTime = cl[idx2].eventsTotalTime / r;
       return (((currentTime - prevTime) / prevTime) * 100).toFixed(1);
     }),
+    summaryList: calendarDataList.map((l) => l.summary),
   };
 };
 
@@ -156,6 +157,9 @@ const formatInnerAverageData = (
           prevCalendarContent.range;
         return (((currentTime - prevTime) / prevTime) * 100).toFixed(1);
       }),
+      summaryList: Object.keys(d).map((key) =>
+        key === "main" ? key : COLORS_IN_EVENT[Number(key)]
+      ),
     };
   });
 };
