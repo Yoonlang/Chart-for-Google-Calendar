@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import { DatasetContent, DateRange } from "../types";
 import Dataset from "./Dataset";
 import { isNumber } from "chart.js/helpers";
+import _ from "lodash";
 
 const SCPopup = styled.div`
   display: flex;
@@ -85,10 +86,10 @@ const Popup = () => {
     datasetContent: DatasetContent,
     idx: number
   ) => {
-    const tempDatasetContentList = [...(datasetContentList ?? [])];
-    tempDatasetContentList[idx] = datasetContent;
-    handleDatasetPercent(tempDatasetContentList, idx);
-    setDatasetContentList(tempDatasetContentList);
+    const copiedDatasetContentList = _.cloneDeep(datasetContentList) ?? [];
+    copiedDatasetContentList[idx] = datasetContent;
+    handleDatasetPercent(copiedDatasetContentList, idx);
+    setDatasetContentList(copiedDatasetContentList);
   };
 
   return (
