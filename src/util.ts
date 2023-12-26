@@ -34,7 +34,7 @@ export const getDateRangeEvents = async (
   const res = await Promise.all(
     calendarIdList.map((cid) =>
       fetch(
-        `${URLS.EVENTS_PRE}${cid}${URLS.EVENTS_SUF}/?timeMin=${prev}&timeMax=${next}&maxResults=1000`,
+        `${URLS.EVENTS_PRE}${cid}${URLS.EVENTS_SUF}/?timeMin=${prev}&timeMax=${next}&maxResults=1000&singleEvents=true`,
         {
           headers,
         }
