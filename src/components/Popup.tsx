@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   getAllDatasetContent,
@@ -10,6 +10,7 @@ import { DatasetContent, DateRange } from "../types";
 import Dataset from "./Dataset";
 import { isNumber } from "chart.js/helpers";
 import _ from "lodash";
+import Analytics from "../googleAnalytics";
 
 const SCPopup = styled.div`
   display: flex;
@@ -80,6 +81,10 @@ const Popup = () => {
       setDatasetContentList(res);
     };
     handleAllDatasetContent();
+  }, []);
+
+  useEffect(() => {
+    Analytics.firePageViewEvent("popup", document.location.href);
   }, []);
 
   const handleDatasetContent = (
