@@ -14,8 +14,13 @@
     "default_popup": "popup.html"
   },
 
-  "permissions": ["identity"],
+  "permissions": ["identity", "storage"],
   "host_permissions": ["<all_urls>"],
+
+  "background": {
+    "service_worker": "js/background.js",
+    "type": "module"
+  },
 
   "oauth2": {
     "client_id": "883357390105-0edmd23muopd98cjv1cco8aagkdjg3lj.apps.googleusercontent.com",

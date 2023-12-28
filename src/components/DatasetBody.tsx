@@ -6,6 +6,7 @@ import { AverageData, ChartData } from "../types";
 import styled from "styled-components";
 import { IconButton } from "rsuite";
 import ArrowLeftLineIcon from "@rsuite/icons/ArrowLeftLine";
+import Analytics from "../googleAnalytics";
 
 const DatasetBodyCommonContainer = styled.div`
   display: flex;
@@ -91,6 +92,7 @@ const DatasetBodyMain: React.FC<MainProps> = ({
       onClick: (ev: ChartEvent, el: ActiveElement[]) => {
         if (el[0]) {
           openDetailDataset(el[0].index);
+          Analytics.fireEvent("click_pie");
         }
       },
     };
