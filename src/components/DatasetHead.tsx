@@ -1,8 +1,10 @@
+import React from "react";
 import { DateRangePicker } from "rsuite";
 import styled from "styled-components";
 import { DatasetContent, HeaderData } from "../types";
 import { getDatasetContent } from "../getDatasetContent";
 import dayjs from "dayjs";
+import Analytics from "../googleAnalytics";
 
 const SCDatasetHead = styled.div`
   display: flex;
@@ -35,7 +37,14 @@ const DatasetHead: React.FC<props> = ({
       <DateRangePicker
         defaultValue={[from.toDate(), to.toDate()]}
         onChange={async (v) => {
+          if (!v) {
+            return;
+          }
           const [from, to] = v!;
+          Analytics.fireEvent("change_date_range", {
+            prev_date_range: `${dateRange[0].toISOString()},${dateRange[1].toISOString()}`,
+            new_date_range: `${from.toISOString()},${to.toISOString()}`,
+          });
           setIsLoading(true);
           const res = await getDatasetContent(
             [dayjs(from), dayjs(to).endOf("d")],
