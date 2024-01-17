@@ -264,7 +264,7 @@ const getCalendarContentList = (
           events,
           eventsTotalTime: getMinuites(
             events
-              .map((e) =>
+              ?.map((e) =>
                 dayjs(e.end.dateTime).diff(dayjs(e.start.dateTime), "ms")
               )
               .reduce((acc, cur) => acc + cur, 0)
