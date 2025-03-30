@@ -28,7 +28,15 @@ const manifest = {
   version: packageJson.version,
   description: "__MSG_extensionDescription__",
   host_permissions: ["<all_urls>"],
-  permissions: ["storage", "scripting", "tabs", "notifications", "sidePanel"],
+  permissions: [
+    "identity",
+    "storage",
+    "storage",
+    "scripting",
+    "tabs",
+    "notifications",
+    "sidePanel",
+  ],
   options_page: "options/index.html",
   background: {
     service_worker: "background.js",
@@ -37,6 +45,15 @@ const manifest = {
   action: {
     default_popup: "popup/index.html",
     default_icon: "test.png",
+  },
+  oauth2: {
+    client_id:
+      "879174495444-jrpfddad22rap7t5n0fksrhqvpakqnbc.apps.googleusercontent.com",
+    scopes: [
+      "https://www.googleapis.com/auth/calendar.calendarlist.readonly",
+      "https://www.googleapis.com/auth/calendar.calendars.readonly",
+      "https://www.googleapis.com/auth/calendar.events.readonly",
+    ],
   },
   content_scripts: [
     {
